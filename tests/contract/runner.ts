@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { MuninClient } from "../../packages/sdk-ts/src/client";
+import { MuninClient } from "../../packages/ts-sdk/src/client";
 import { runCoreActionSuite } from "./suites/core-actions";
 
 interface AdapterManifest {

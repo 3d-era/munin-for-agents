@@ -8,7 +8,7 @@
     "test": "echo 'adapter-template tests: pending'"
   },
   "dependencies": {
-    "@munin/sdk-ts": "workspace:*"
+    "munin/sdk": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

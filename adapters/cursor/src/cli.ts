@@ -3,14 +3,23 @@ import {
   loadCliEnv,
   parseCliArgs,
   safeError,
-} from "@munin/adapter-runtime";
+  startMcpServer,
+} from "munin/runtime/dist/index.js";
 import { createCursorMuninAdapter } from "./index.js";
 
 async function main() {
   try {
+    const args = process.argv.slice(2);
+    
+    // Start MCP server if requested or empty args
+    if (args.length === 0 || args[0] === 'mcp') {
+      await startMcpServer();
+      return;
+    }
+
     const { action, payload } = parseCliArgs(
-      process.argv.slice(2),
-      "Usage: munin-cursor <action> [payload-json]",
+      args,
+      "Usage: munin-cursor <action> [payload-json] OR munin-cursor mcp",
     );
     const env = loadCliEnv();
 

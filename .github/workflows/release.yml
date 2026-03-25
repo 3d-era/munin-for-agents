@@ -5,15 +5,15 @@ on:
   push:
     tags:
       - "spec-v*"
-      - "sdk-ts-v*"
+      - "munin-sdk-v*"
       - "sdk-py-v*"
-      - "adapter-cursor-v*"
-      - "adapter-claude-code-v*"
-      - "adapter-gemini-cli-v*"
-      - "adapter-openclaw-v*"
-      - "adapter-google-antigravity-v*"
-      - "adapter-kilo-code-v*"
-      - "adapter-qwen-code-v*"
+      - "munin-cursor-v*"
+      - "munin-claude-v*"
+      - "munin-gemini-v*"
+      - "munin-openclaw-v*"
+      - "munin-antigravity-v*"
+      - "munin-kilo-v*"
+      - "munin-qwen-v*"
 
 jobs:
   verify:
@@ -54,15 +54,15 @@ jobs:
           echo "Release tag: ${TAG}"
           case "${TAG}" in
             spec-v*) echo "target=packages/spec" >> $GITHUB_OUTPUT ;;
-            sdk-ts-v*) echo "target=packages/sdk-ts" >> $GITHUB_OUTPUT ;;
-            sdk-py-v*) echo "target=packages/sdk-py" >> $GITHUB_OUTPUT ;;
-            adapter-cursor-v*) echo "target=adapters/cursor" >> $GITHUB_OUTPUT ;;
-            adapter-claude-code-v*) echo "target=adapters/claude-code" >> $GITHUB_OUTPUT ;;
-            adapter-gemini-cli-v*) echo "target=adapters/gemini-cli" >> $GITHUB_OUTPUT ;;
-            adapter-openclaw-v*) echo "target=adapters/openclaw" >> $GITHUB_OUTPUT ;;
-            adapter-google-antigravity-v*) echo "target=adapters/google-antigravity" >> $GITHUB_OUTPUT ;;
-            adapter-kilo-code-v*) echo "target=adapters/kilo-code" >> $GITHUB_OUTPUT ;;
-            adapter-qwen-code-v*) echo "target=adapters/qwen-code" >> $GITHUB_OUTPUT ;;
+            munin-sdk-v*) echo "target=packages/ts-sdk" >> $GITHUB_OUTPUT ;;
+            sdk-py-v*) echo "target=packages/python-sdk" >> $GITHUB_OUTPUT ;;
+            munin-cursor-v*) echo "target=adapters/cursor" >> $GITHUB_OUTPUT ;;
+            munin-claude-v*) echo "target=adapters/claude" >> $GITHUB_OUTPUT ;;
+            munin-gemini-v*) echo "target=adapters/gemini" >> $GITHUB_OUTPUT ;;
+            munin-openclaw-v*) echo "target=adapters/openclaw" >> $GITHUB_OUTPUT ;;
+            munin-antigravity-v*) echo "target=adapters/antigravity" >> $GITHUB_OUTPUT ;;
+            munin-kilo-v*) echo "target=adapters/kilo" >> $GITHUB_OUTPUT ;;
+            munin-qwen-v*) echo "target=adapters/qwen" >> $GITHUB_OUTPUT ;;
             *) echo "Unsupported tag format"; exit 1 ;;
           esac
 

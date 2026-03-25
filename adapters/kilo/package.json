@@ -1,0 +1,16 @@
+{
+  "name": "munin/kilo",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "echo 'adapter-kilo-code tests: pending'"
+  },
+  "dependencies": {
+    "munin/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}

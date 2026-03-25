@@ -1,5 +1,5 @@
 {
-  "name": "local-sdk-ts",
+  "name": "munin-sdk-local",
   "type": "sdk",
   "baseUrl": "http://127.0.0.1:4010",
   "project": "default",

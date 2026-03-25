@@ -3,7 +3,7 @@
   "project": "default",
   "requestId": "req_store_001",
   "client": {
-    "name": "munin-sdk-ts",
+    "name": "munin/sdk",
     "version": "0.1.0"
   },
   "payload": {

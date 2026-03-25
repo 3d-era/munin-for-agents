@@ -1,4 +1,4 @@
-import type { MuninClient } from "../../../packages/sdk-ts/src/client";
+import type { MuninClient } from "../../../packages/ts-sdk/src/client";
 
 export interface ContractResult {
   name: string;

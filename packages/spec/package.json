@@ -1,5 +1,5 @@
 {
-  "name": "@munin/spec",
+  "name": "munin/spec",
   "version": "0.1.0",
   "private": true,
   "description": "Munin protocol specification and schemas",

@@ -3,9 +3,9 @@
 Monorepo scaffold for Munin multi-agent ecosystem:
 
 - Protocol spec (`packages/spec`)
-- TypeScript SDK (`packages/sdk-ts`)
-- Python SDK (`packages/sdk-py`)
-- First-class adapters (`adapters/cursor`, `adapters/claude-code`, `adapters/gemini-cli`)
+- TypeScript SDK (`packages/ts-sdk`)
+- Python SDK (`packages/python-sdk`)
+- First-class adapters (`adapters/cursor`, `adapters/claude`, `adapters/gemini`)
 - Generic MCP adapter template (`adapters/generic-mcp-template`)
 - Contract test harness (`tests/contract`)
 - Release tag mapping (`docs/release-tags.md`)
@@ -43,7 +43,7 @@ MUNIN_CONTRACT_BASE_URL=http://127.0.0.1:4011 pnpm test:contract
 
 By default contract runner uses:
 
-- `tests/contract/adapter-manifests/local-sdk-ts.json`
+- `tests/contract/adapter-manifests/munin-sdk-local.json`
 
 Override with custom manifest:
 
