@@ -1,4 +1,4 @@
-import { MuninClient } from "@munin/sdk-ts";
+import { MuninClient } from "munin/sdk";
 
 export function createMuninAdapter(config: {
   baseUrl: string;

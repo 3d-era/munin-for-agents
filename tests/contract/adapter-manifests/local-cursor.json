@@ -1,5 +1,5 @@
 {
-  "name": "adapter-cursor-local",
+  "name": "munin-cursor-local",
   "type": "adapter",
   "baseUrl": "http://127.0.0.1:4010",
   "project": "default",

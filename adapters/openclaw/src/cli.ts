@@ -3,14 +3,23 @@ import {
   loadCliEnv,
   parseCliArgs,
   safeError,
-} from "@munin/adapter-runtime";
+  startMcpServer,
+} from "munin/runtime/dist/index.js";
 import { createOpenClawMuninAdapter } from "./index.js";
 
 async function main() {
   try {
+    const args = process.argv.slice(2);
+    
+    // If no arguments, or 'mcp' is passed, start as MCP server
+    if (args.length === 0 || args[0] === 'mcp') {
+      await startMcpServer();
+      return;
+    }
+
     const { action, payload } = parseCliArgs(
-      process.argv.slice(2),
-      "Usage: munin-openclaw <action> [payload-json]",
+      args,
+      "Usage: munin-openclaw <action> [payload-json] OR munin-openclaw mcp",
     );
     const env = loadCliEnv();
 

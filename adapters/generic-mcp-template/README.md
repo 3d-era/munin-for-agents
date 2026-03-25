@@ -7,7 +7,7 @@ Use this template to bootstrap adapters for Kilo Code, Qwen Code, OpenClaw, Goog
 - `template/package.json`
 - `template/tsconfig.json`
 - `template/src/index.ts`
-- Shared usage pattern based on `@munin/sdk-ts`
+- Shared usage pattern based on `munin/sdk`
 
 ## Steps
 

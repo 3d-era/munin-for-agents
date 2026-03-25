@@ -1,4 +1,4 @@
-import { MuninClient } from "@munin/sdk-ts";
+import { MuninClient } from "munin/sdk/dist/index.js";
 
 export function createOpenClawMuninAdapter(config: {
   baseUrl: string;

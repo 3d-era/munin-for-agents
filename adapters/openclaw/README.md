@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-pnpm --filter @munin/adapter-openclaw build
+pnpm --filter munin/openclaw build
 ```
 
 ## Run

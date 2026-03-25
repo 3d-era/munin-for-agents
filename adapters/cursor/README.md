@@ -3,12 +3,12 @@
 ## Status
 
 - Phase: scaffold
-- Core actions: wired through `@munin/sdk-ts`
+- Core actions: wired through `munin/sdk`
 
 ## Usage
 
 ```ts
-import { createCursorMuninAdapter } from "@munin/adapter-cursor";
+import { createCursorMuninAdapter } from "munin/cursor";
 
 const adapter = createCursorMuninAdapter({
   baseUrl: process.env.MUNIN_BASE_URL!,

@@ -5,6 +5,6 @@
    - `MUNIN_API_KEY`
    - `MUNIN_PROJECT`
 2. Install dependencies in `munin-ecosystem`.
-3. Use `@munin/adapter-cursor` to invoke core actions.
+3. Use `munin/cursor` to invoke core actions.
 4. Verify with contract test:
    - `pnpm test:contract`
