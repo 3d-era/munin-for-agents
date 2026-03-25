@@ -58,9 +58,10 @@ export class MuninClient {
       }
     }
 
-    const request: MuninActionEnvelope<TPayload> = {
+    const request = {
+      apiKey: this.apiKey,
+      projectId: this.project,
       action,
-      project: this.project,
       payload,
       requestId: options?.requestId,
       client: {
@@ -76,7 +77,6 @@ export class MuninClient {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(this.apiKey ? { Authorization: `Bearer ${this.apiKey}` } : {}),
       },
       body: JSON.stringify(request),
       signal: controller.signal,
@@ -88,9 +88,9 @@ export class MuninClient {
 
     clearTimeout(timeout);
 
-    const body = (await response.json()) as MuninResponse<TData>;
+    const body = (await response.json()) as any;
 
-    if (!response.ok || !body.ok) {
+    if (!response.ok || (body.ok === false) || (body.success === false)) {
       throw new MuninSdkError(
         body.error ?? {
           code: "INTERNAL_ERROR",
