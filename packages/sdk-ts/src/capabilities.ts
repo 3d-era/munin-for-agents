@@ -1,5 +1,5 @@
-import type { MuninCapabilities, MuninResponse } from "./types";
-import { MuninSdkError, MuninTransportError } from "./errors";
+import type { MuninCapabilities, MuninResponse } from "./types.js";
+import { MuninSdkError, MuninTransportError } from "./errors.js";
 
 export async function fetchCapabilities(
   baseUrl: string,

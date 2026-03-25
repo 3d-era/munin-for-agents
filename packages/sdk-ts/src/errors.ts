@@ -1,4 +1,4 @@
-import type { MuninError } from "./types";
+import type { MuninError } from "./types.js";
 
 export class MuninSdkError extends Error {
   public readonly code: MuninError["code"];

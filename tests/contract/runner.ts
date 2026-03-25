@@ -30,10 +30,32 @@ function getManifestPaths(inputPath?: string): string[] {
     .sort();
 }
 
+function resolveBaseUrl(manifestBaseUrl: string): string {
+  const direct = process.env.MUNIN_CONTRACT_BASE_URL;
+  if (direct) {
+    return direct;
+  }
+
+  const host = process.env.MUNIN_CONTRACT_HOST;
+  const port = process.env.MUNIN_CONTRACT_PORT;
+  if (host || port) {
+    const url = new URL(manifestBaseUrl);
+    if (host) {
+      url.hostname = host;
+    }
+    if (port) {
+      url.port = port;
+    }
+    return url.toString().replace(/\/$/, "");
+  }
+
+  return manifestBaseUrl;
+}
+
 async function runForManifest(manifestPath: string): Promise<boolean> {
   const manifest = loadManifest(manifestPath);
   const client = new MuninClient({
-    baseUrl: manifest.baseUrl,
+    baseUrl: resolveBaseUrl(manifest.baseUrl),
     project: manifest.project,
     apiKey: manifest.apiKey,
   });

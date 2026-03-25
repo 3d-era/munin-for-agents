@@ -4,7 +4,7 @@ import {
   parseCliArgs,
   safeError,
 } from "@munin/adapter-runtime";
-import { createGeminiCliMuninAdapter } from "./index";
+import { createGeminiCliMuninAdapter } from "./index.js";
 
 async function main() {
   try {

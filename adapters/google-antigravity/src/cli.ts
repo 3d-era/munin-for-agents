@@ -4,7 +4,7 @@ import {
   parseCliArgs,
   safeError,
 } from "@munin/adapter-runtime";
-import { createAntigravityMuninAdapter } from "./index";
+import { createAntigravityMuninAdapter } from "./index.js";
 
 async function main() {
   try {

@@ -22,6 +22,25 @@ pnpm test:contract
 
 ## Contract test
 
+Start mock server (default 4010):
+
+```bash
+pnpm test:contract:mock
+```
+
+If port is occupied, run on another port:
+
+```bash
+MUNIN_CONTRACT_PORT=4011 pnpm test:contract:mock
+MUNIN_CONTRACT_PORT=4011 pnpm test:contract
+```
+
+You can also override the full base URL directly:
+
+```bash
+MUNIN_CONTRACT_BASE_URL=http://127.0.0.1:4011 pnpm test:contract
+```
+
 By default contract runner uses:
 
 - `tests/contract/adapter-manifests/local-sdk-ts.json`

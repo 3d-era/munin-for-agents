@@ -23,6 +23,9 @@ importers:
 
   adapters/claude-code:
     dependencies:
+      '@munin/adapter-runtime':
+        specifier: workspace:*
+        version: link:../../packages/adapter-runtime
       '@munin/sdk-ts':
         specifier: workspace:*
         version: link:../../packages/sdk-ts
@@ -33,6 +36,9 @@ importers:
 
   adapters/cursor:
     dependencies:
+      '@munin/adapter-runtime':
+        specifier: workspace:*
+        version: link:../../packages/adapter-runtime
       '@munin/sdk-ts':
         specifier: workspace:*
         version: link:../../packages/sdk-ts
@@ -43,9 +49,64 @@ importers:
 
   adapters/gemini-cli:
     dependencies:
+      '@munin/adapter-runtime':
+        specifier: workspace:*
+        version: link:../../packages/adapter-runtime
       '@munin/sdk-ts':
         specifier: workspace:*
         version: link:../../packages/sdk-ts
+    devDependencies:
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
+  adapters/google-antigravity:
+    dependencies:
+      '@munin/adapter-runtime':
+        specifier: workspace:*
+        version: link:../../packages/adapter-runtime
+      '@munin/sdk-ts':
+        specifier: workspace:*
+        version: link:../../packages/sdk-ts
+    devDependencies:
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
+  adapters/kilo-code:
+    dependencies:
+      '@munin/sdk-ts':
+        specifier: workspace:*
+        version: link:../../packages/sdk-ts
+    devDependencies:
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
+  adapters/openclaw:
+    dependencies:
+      '@munin/adapter-runtime':
+        specifier: workspace:*
+        version: link:../../packages/adapter-runtime
+      '@munin/sdk-ts':
+        specifier: workspace:*
+        version: link:../../packages/sdk-ts
+    devDependencies:
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
+  adapters/qwen-code:
+    dependencies:
+      '@munin/sdk-ts':
+        specifier: workspace:*
+        version: link:../../packages/sdk-ts
+    devDependencies:
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
+  packages/adapter-runtime:
     devDependencies:
       typescript:
         specifier: ^5.9.2

@@ -4,7 +4,7 @@ import {
   parseCliArgs,
   safeError,
 } from "@munin/adapter-runtime";
-import { createClaudeCodeMuninAdapter } from "./index";
+import { createClaudeCodeMuninAdapter } from "./index.js";
 
 async function main() {
   try {

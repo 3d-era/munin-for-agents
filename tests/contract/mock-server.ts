@@ -1,5 +1,8 @@
 import { createServer } from "node:http";
 
+const host = process.env.MUNIN_CONTRACT_HOST ?? "127.0.0.1";
+const port = Number(process.env.MUNIN_CONTRACT_PORT ?? 4010);
+
 const server = createServer((req, res) => {
   if (req.method === "GET" && req.url === "/api/mcp/capabilities") {
     res.setHeader("Content-Type", "application/json");
@@ -54,6 +57,18 @@ const server = createServer((req, res) => {
   res.end(JSON.stringify({ ok: false, error: { code: "NOT_FOUND", message: "Not found" } }));
 });
 
-server.listen(4010, "127.0.0.1", () => {
-  console.log("Munin contract mock server listening on http://127.0.0.1:4010");
+server.on("error", (error: NodeJS.ErrnoException) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(
+      `Port ${port} is already in use on ${host}. ` +
+        "Use MUNIN_CONTRACT_PORT to pick another port.",
+    );
+    process.exit(1);
+  }
+
+  throw error;
+});
+
+server.listen(port, host, () => {
+  console.log(`Munin contract mock server listening on http://${host}:${port}`);
 });

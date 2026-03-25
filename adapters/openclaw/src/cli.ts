@@ -4,7 +4,7 @@ import {
   parseCliArgs,
   safeError,
 } from "@munin/adapter-runtime";
-import { createOpenClawMuninAdapter } from "./index";
+import { createOpenClawMuninAdapter } from "./index.js";
 
 async function main() {
   try {

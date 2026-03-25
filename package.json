@@ -7,7 +7,9 @@
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
-    "test:contract": "tsx tests/contract/runner.ts"
+    "test:contract": "tsx tests/contract/runner.ts",
+    "test:contract:mock": "tsx tests/contract/mock-server.ts",
+    "test:contract:port": "tsx tests/contract/runner.ts"
   },
   "devDependencies": {
     "tsx": "^4.20.5",

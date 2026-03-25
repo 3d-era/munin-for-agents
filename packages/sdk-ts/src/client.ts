@@ -1,15 +1,15 @@
-import { MuninSdkError, MuninTransportError } from "./errors";
+import { MuninSdkError, MuninTransportError } from "./errors.js";
 import {
   fetchCapabilities,
   isActionSupported,
-} from "./capabilities";
+} from "./capabilities.js";
 import type {
   MuninAction,
   MuninActionEnvelope,
   MuninCapabilities,
   MuninClientConfig,
   MuninResponse,
-} from "./types";
+} from "./types.js";
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 

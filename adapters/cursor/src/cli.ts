@@ -4,7 +4,7 @@ import {
   parseCliArgs,
   safeError,
 } from "@munin/adapter-runtime";
-import { createCursorMuninAdapter } from "./index";
+import { createCursorMuninAdapter } from "./index.js";
 
 async function main() {
   try {
