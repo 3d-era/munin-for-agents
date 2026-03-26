@@ -37,7 +37,12 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Verify
-        run: pnpm lint && pnpm build && pnpm test && pnpm test:contract
+        run: |
+          pnpm lint && pnpm build && pnpm test
+          pnpm test:contract:mock &
+          echo "Waiting for mock server to start..."
+          sleep 5
+          pnpm test:contract
 
   release-routing:
     runs-on: ubuntu-latest
