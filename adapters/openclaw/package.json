@@ -1,11 +1,16 @@
 {
-  "name": "munin/openclaw",
+  "name": "@munin/openclaw",
   "version": "0.1.0",
   "type": "module",
   "openclaw": {
-    "extensions": ["./dist/cli.js"],
+    "extensions": [
+      "./dist/cli.js"
+    ],
     "requires": {
-      "env": ["MUNIN_BASE_URL", "MUNIN_PROJECT"]
+      "env": [
+        "MUNIN_BASE_URL",
+        "MUNIN_PROJECT"
+      ]
     }
   },
   "bin": {
@@ -17,8 +22,8 @@
     "test": "echo 'adapter-openclaw tests: pending'"
   },
   "dependencies": {
-    "munin/runtime": "workspace:*",
-    "munin/sdk": "workspace:*"
+    "@munin/sdk": "workspace:*",
+    "@munin/runtime": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.9.2"
