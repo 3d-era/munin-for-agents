@@ -1,5 +1,5 @@
 {
-  "name": "munin/runtime",
+  "name": "@munin/runtime",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",
@@ -17,6 +17,6 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.1",
-    "munin/sdk": "workspace:*"
+    "@munin/sdk": "workspace:*"
   }
 }

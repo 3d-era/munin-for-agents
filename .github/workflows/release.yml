@@ -42,8 +42,11 @@ jobs:
   release-routing:
     runs-on: ubuntu-latest
     needs: verify
+    outputs:
+      target: ${{ steps.resolve.outputs.target }}
     steps:
       - name: Resolve package from tag
+        id: resolve
         run: |
           TAG="${GITHUB_REF_NAME}"
           echo "Release tag: ${TAG}"
@@ -61,5 +64,27 @@ jobs:
             *) echo "Unsupported tag format"; exit 1 ;;
           esac
 
-      - name: Release note scaffold
-        run: echo "Release routing complete (publish step to be wired per target package)"
+  publish:
+    runs-on: ubuntu-latest
+    needs: release-routing
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Publish
+        working-directory: ${{ needs.release-routing.outputs.target }}
+        run: pnpm publish --no-git-checks --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

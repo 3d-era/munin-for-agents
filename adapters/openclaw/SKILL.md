@@ -1,6 +1,6 @@
 ---
 name: "kalera-munin/openclaw"
-description: "Kalera Munin - Long-Term Memory integration for OpenClaw. Stores and retrieves cross-session context."
+description: "Munin - The $1.6/mo Persistent Memory for OpenClaw. Stop your agent from having Alzheimer's."
 version: "0.1.0"
 metadata:
   clawdbot:
@@ -9,23 +9,46 @@ metadata:
       env: ["MUNIN_BASE_URL", "MUNIN_PROJECT", "MUNIN_API_KEY"]
 ---
 
-# Kalera Munin - OpenClaw Plugin
+# 🐦 Munin: Reliable Memory for Your OpenClaw Agent
 
-This plugin connects OpenClaw to your Kalera Munin server, allowing the agent to remember facts, plans, and instructions across multiple sessions.
+Your agent forgets everything the moment you close the tab. You've seen the "pro" solutions—Mem0, Zep, LangMem—and you've seen their **$20/month** price tags. 
+
+We think that's insane. 
+
+**Munin** is the pragmatic alternative. It’s the "Reliable Friend" that sits on your agent’s shoulder and whispers: *"Hey, remember when pa Kal said he preferred Python over Node last week?"*
+
+### 💰 Why Munin? (The "No-Brainer" Math)
+
+| Feature | Mem0 / Zep | **Munin** |
+| :--- | :--- | :--- |
+| **Monthly Cost** | $19.00 - $249.00 | **$1.60** |
+| **MCP Support** | Mixed | **Native / First-class** |
+| **Self-Hostable** | OSS (Complex) | **Yes (Simple)** |
+| **Bullshit Factor** | High (Enterprise-synergy) | **Zero (Developer-first)** |
+
+**That’s a 10x - 150x price gap.** We aren't building "Enterprise Synergy Platforms". We're building a notebook for your AI.
+
+---
 
 ## 🔒 Security & Privacy
 
 **Trust Statement:**
-By using this skill, data (memories, context) is sent to your configured Munin server instance. Only install if you trust the Munin instance you configure.
+Data stays where you tell it to stay. If you self-host, it never leaves your server. If you use our cloud, it's encrypted and isolated by project.
 
 **External Endpoints:**
-All data is sent to the URL specified in the `MUNIN_BASE_URL` environment variable. By default, no data leaves your control unless your Munin server is hosted externally.
+Data is sent ONLY to your `MUNIN_BASE_URL`. We don't phone home. We don't sell your "memories" to train models.
 
-## 🚀 Setup
+---
 
-1. Provide your Munin server details via environment variables:
-   - `MUNIN_BASE_URL`: The URL of your Munin server (e.g., `http://127.0.0.1:3237`).
-   - `MUNIN_PROJECT`: The project namespace to use (e.g., `default`, `munin-ecosystem`).
-   - `MUNIN_API_KEY`: (Optional) Your API key if authentication is enabled.
+## 🚀 Setup (Fast & Honest)
 
-2. Once installed, OpenClaw will automatically use this plugin via the Model Context Protocol (MCP) to store and retrieve memories.
+1. **Get your Munin instance:** Self-host it or grab a cloud key at [munin.ai](https://munin.ai).
+2. **Configure OpenClaw:** Add these to your `.env` or agent config:
+   - `MUNIN_BASE_URL`: Where your Munin lives (e.g., `https://api.munin.ai`).
+   - `MUNIN_PROJECT`: Your project name (e.g., `research-agent`).
+   - `MUNIN_API_KEY`: Your key to the kingdom.
+
+3. **Profit:** Your agent now has long-term memory. No more repeating yourself.
+
+---
+*Built with ❤️ by Kalera for the OpenClaw Ecosystem.*

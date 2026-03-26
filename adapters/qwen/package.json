@@ -1,5 +1,5 @@
 {
-  "name": "munin/qwen",
+  "name": "@munin/qwen",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
     "test": "echo 'adapter-qwen-code tests: pending'"
   },
   "dependencies": {
-    "munin/sdk": "workspace:*"
+    "@munin/sdk": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

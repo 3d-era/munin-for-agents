@@ -1,5 +1,5 @@
 {
-  "name": "munin/cursor",
+  "name": "@munin/cursor",
   "version": "0.1.0",
   "type": "module",
   "bin": {
@@ -11,8 +11,8 @@
     "test": "echo 'adapter-cursor tests: pending'"
   },
   "dependencies": {
-    "munin/runtime": "workspace:*",
-    "munin/sdk": "workspace:*"
+    "@munin/sdk": "workspace:*",
+    "@munin/runtime": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.9.2"
