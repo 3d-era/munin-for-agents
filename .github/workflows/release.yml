@@ -54,25 +54,32 @@ jobs:
     needs: verify
     outputs:
       target: ${{ steps.resolve.outputs.target }}
+      mode: ${{ steps.resolve.outputs.mode }}
     steps:
       - name: Resolve package from tag
         id: resolve
         run: |
           TAG="${{ github.event.inputs.tag || github.ref_name }}"
           echo "Release tag: ${TAG}"
-          case "${TAG}" in
-            spec-v*) echo "target=packages/spec" >> $GITHUB_OUTPUT ;;
-            munin-sdk-v*) echo "target=packages/ts-sdk" >> $GITHUB_OUTPUT ;;
-            sdk-py-v*) echo "target=packages/python-sdk" >> $GITHUB_OUTPUT ;;
-            munin-cursor-v*) echo "target=adapters/cursor" >> $GITHUB_OUTPUT ;;
-            munin-claude-v*) echo "target=adapters/claude" >> $GITHUB_OUTPUT ;;
-            munin-gemini-v*) echo "target=adapters/gemini" >> $GITHUB_OUTPUT ;;
-            munin-openclaw-v*) echo "target=adapters/openclaw" >> $GITHUB_OUTPUT ;;
-            munin-antigravity-v*) echo "target=adapters/antigravity" >> $GITHUB_OUTPUT ;;
-            munin-kilo-v*) echo "target=adapters/kilo" >> $GITHUB_OUTPUT ;;
-            munin-qwen-v*) echo "target=adapters/qwen" >> $GITHUB_OUTPUT ;;
-            *) echo "Unsupported tag format"; exit 1 ;;
-          esac
+          if [ "${TAG}" = "all" ]; then
+            echo "target=." >> $GITHUB_OUTPUT
+            echo "mode=all" >> $GITHUB_OUTPUT
+          else
+            echo "mode=single" >> $GITHUB_OUTPUT
+            case "${TAG}" in
+              spec-v*) echo "target=packages/spec" >> $GITHUB_OUTPUT ;;
+              munin-sdk-v*) echo "target=packages/ts-sdk" >> $GITHUB_OUTPUT ;;
+              sdk-py-v*) echo "target=packages/python-sdk" >> $GITHUB_OUTPUT ;;
+              munin-cursor-v*) echo "target=adapters/cursor" >> $GITHUB_OUTPUT ;;
+              munin-claude-v*) echo "target=adapters/claude" >> $GITHUB_OUTPUT ;;
+              munin-gemini-v*) echo "target=adapters/gemini" >> $GITHUB_OUTPUT ;;
+              munin-openclaw-v*) echo "target=adapters/openclaw" >> $GITHUB_OUTPUT ;;
+              munin-antigravity-v*) echo "target=adapters/antigravity" >> $GITHUB_OUTPUT ;;
+              munin-kilo-v*) echo "target=adapters/kilo" >> $GITHUB_OUTPUT ;;
+              munin-qwen-v*) echo "target=adapters/qwen" >> $GITHUB_OUTPUT ;;
+              *) echo "Unsupported tag format"; exit 1 ;;
+            esac
+          fi
 
   publish:
     runs-on: ubuntu-latest
@@ -98,4 +105,10 @@ jobs:
       - name: Publish
         run: |
           npm config set //registry.npmjs.org/:_authToken "${{ secrets.NPM_TOKEN }}"
-          pnpm publish --no-git-checks --access public -C ${{ needs.release-routing.outputs.target }}
+          if [ "${{ needs.release-routing.outputs.mode }}" = "all" ]; then
+            echo "Publishing all packages in recursive mode..."
+            pnpm publish -r --no-git-checks --access public
+          else
+            echo "Publishing single package in ${{ needs.release-routing.outputs.target }}..."
+            pnpm publish --no-git-checks --access public -C ${{ needs.release-routing.outputs.target }}
+          fi
