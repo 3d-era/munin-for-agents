@@ -64,7 +64,7 @@ Adapters to validate:
 
 SDKs to validate:
 
-- `munin/sdk`
+- `@munin/sdk`
 - `munin-sdk-py`
 
 ## 5. Test Cases
