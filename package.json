@@ -4,9 +4,9 @@
   "version": "0.1.0",
   "packageManager": "pnpm@10.16.0",
   "scripts": {
-    "build": "pnpm -r build",
-    "lint": "pnpm -r lint",
-    "test": "pnpm -r test",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
     "test:contract": "tsx tests/contract/runner.ts",
     "test:contract:mock": "tsx tests/contract/mock-server.ts",
     "test:contract:port": "tsx tests/contract/runner.ts"
@@ -15,6 +15,7 @@
     "@types/node": "^24.3.0",
     "eslint": "^9.34.0",
     "tsx": "^4.20.5",
+    "turbo": "^2.3.4",
     "typescript": "^5.9.2"
   },
   "dependencies": {
