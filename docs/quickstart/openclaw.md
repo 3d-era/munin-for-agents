@@ -14,19 +14,19 @@ export MUNIN_BACKOFF_MS="300"
 ## 2) Build adapter
 
 ```bash
-pnpm --filter munin/openclaw build
+pnpm --filter @munin/openclaw build
 ```
 
 ## 3) Kiểm tra capabilities
 
 ```bash
-pnpm --filter munin/openclaw exec munin-openclaw capabilities
+pnpm --filter @munin/openclaw exec munin-openclaw capabilities
 ```
 
 ## 4) Gọi action mẫu
 
 ```bash
-pnpm --filter munin/openclaw exec munin-openclaw search '{"query":"munin ecosystem"}'
+pnpm --filter @munin/openclaw exec munin-openclaw search '{"query":"munin ecosystem"}'
 ```
 
 ## 5) Notes production hardening
