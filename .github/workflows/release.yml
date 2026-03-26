@@ -88,7 +88,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install
         run: pnpm install --no-frozen-lockfile
@@ -97,9 +96,6 @@ jobs:
         run: pnpm build
 
       - name: Publish
-        working-directory: ${{ needs.release-routing.outputs.target }}
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
-          pnpm publish --no-git-checks --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          npm config set //registry.npmjs.org/:_authToken "${{ secrets.NPM_TOKEN }}"
+          pnpm publish --no-git-checks --access public -C ${{ needs.release-routing.outputs.target }}
