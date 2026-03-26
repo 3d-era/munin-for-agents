@@ -93,8 +93,13 @@ jobs:
       - name: Install
         run: pnpm install --no-frozen-lockfile
 
+      - name: Build
+        run: pnpm build
+
       - name: Publish
         working-directory: ${{ needs.release-routing.outputs.target }}
-        run: pnpm publish --no-git-checks --access public
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > .npmrc
+          pnpm publish --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
