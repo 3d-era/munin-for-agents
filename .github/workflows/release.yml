@@ -2,6 +2,11 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Gõ tag muốn release (ví dụ: munin-cursor-v0.1.0)'
+        required: true
+        default: 'munin-cursor-v0.1.0'
   push:
     tags:
       - "spec-v*"
@@ -53,7 +58,7 @@ jobs:
       - name: Resolve package from tag
         id: resolve
         run: |
-          TAG="${GITHUB_REF_NAME}"
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
           echo "Release tag: ${TAG}"
           case "${TAG}" in
             spec-v*) echo "target=packages/spec" >> $GITHUB_OUTPUT ;;

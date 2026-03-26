@@ -1,0 +1,19 @@
+name: munin-ai-memory
+version: 0.1.0
+description: Affordable persistent memory for AI agents ($1.6/mo).
+repository: https://github.com/3d-era/munin-for-agents
+license: MIT
+contact: mac@kal.vn
+keywords:
+  - mcp
+  - memory
+  - ai-agent
+  - context
+  - persistent-storage
+adapters:
+  cursor:
+    command: npx -y @munin/cursor
+  claude:
+    command: npx -y @munin/claude
+  openclaw:
+    command: npx -y @munin/openclaw
