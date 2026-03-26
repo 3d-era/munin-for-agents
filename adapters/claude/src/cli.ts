@@ -4,7 +4,7 @@ import {
   parseCliArgs,
   safeError,
   startMcpServer,
-} from "munin/runtime/dist/index.js";
+} from "@munin/runtime/dist/index.js";
 import { createClaudeCodeMuninAdapter } from "./index.js";
 
 async function main() {

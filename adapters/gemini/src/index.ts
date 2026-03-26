@@ -1,4 +1,4 @@
-import { MuninClient } from "munin/sdk/dist/index.js";
+import { MuninClient } from "@munin/sdk/dist/index.js";
 
 export function createGeminiCliMuninAdapter(config: {
   baseUrl: string;
