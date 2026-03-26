@@ -4,7 +4,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { MuninClient } from "@munin/sdk";
+import { MuninClient } from "@kalera/munin-sdk";
 import { loadCliEnv, safeError } from "./index.js";
 
 export async function startMcpServer() {

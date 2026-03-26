@@ -1,5 +1,5 @@
 {
-  "name": "@munin/sdk",
+  "name": "@kalera/munin-sdk",
   "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",

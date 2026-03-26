@@ -65,7 +65,7 @@ export class MuninClient {
       payload,
       requestId: options?.requestId,
       client: {
-        name: "@munin/sdk",
+        name: "@kalera/munin-sdk",
         version: "0.1.0",
       },
     };

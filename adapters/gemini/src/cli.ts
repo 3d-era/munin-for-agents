@@ -3,7 +3,7 @@ import {
   loadCliEnv,
   parseCliArgs,
   safeError,
-} from "@munin/runtime";
+} from "@kalera/munin-runtime";
 import { createGeminiCliMuninAdapter } from "./index.js";
 
 async function main() {

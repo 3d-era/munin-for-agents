@@ -5,7 +5,7 @@ Scaffold adapter generated from generic MCP template.
 ## Usage
 
 ```ts
-import { createQwenCodeMuninAdapter } from "@munin/qwen";
+import { createQwenCodeMuninAdapter } from "@kalera/munin-qwen";
 
 const adapter = createQwenCodeMuninAdapter({
   baseUrl: process.env.MUNIN_BASE_URL!,

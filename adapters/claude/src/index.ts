@@ -1,4 +1,4 @@
-import { MuninClient } from "@munin/sdk";
+import { MuninClient } from "@kalera/munin-sdk";
 
 export function createClaudeCodeMuninAdapter(config: {
   baseUrl: string;

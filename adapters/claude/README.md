@@ -8,7 +8,7 @@
 ## Usage
 
 ```ts
-import { createClaudeCodeMuninAdapter } from "@munin/claude";
+import { createClaudeCodeMuninAdapter } from "@kalera/munin-claude";
 
 const adapter = createClaudeCodeMuninAdapter({
   baseUrl: process.env.MUNIN_BASE_URL!,

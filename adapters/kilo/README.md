@@ -5,7 +5,7 @@ Scaffold adapter generated from generic MCP template.
 ## Usage
 
 ```ts
-import { createKiloCodeMuninAdapter } from "@munin/kilo";
+import { createKiloCodeMuninAdapter } from "@kalera/munin-kilo";
 
 const adapter = createKiloCodeMuninAdapter({
   baseUrl: process.env.MUNIN_BASE_URL!,

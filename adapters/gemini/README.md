@@ -8,7 +8,7 @@
 ## Usage
 
 ```ts
-import { createGeminiCliMuninAdapter } from "@munin/gemini";
+import { createGeminiCliMuninAdapter } from "@kalera/munin-gemini";
 
 const adapter = createGeminiCliMuninAdapter({
   baseUrl: process.env.MUNIN_BASE_URL!,

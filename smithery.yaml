@@ -12,8 +12,8 @@ keywords:
   - persistent-storage
 adapters:
   cursor:
-    command: npx -y @munin/cursor
+    command: npx -y @kalera/munin-cursor
   claude:
-    command: npx -y @munin/claude
+    command: npx -y @kalera/munin-claude
   openclaw:
-    command: npx -y @munin/openclaw
+    command: npx -y @kalera/munin-openclaw

@@ -1,5 +1,5 @@
 {
-  "name": "@munin/kilo",
+  "name": "@kalera/munin-kilo",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
     "test": "echo 'adapter-kilo-code tests: pending'"
   },
   "dependencies": {
-    "@munin/sdk": "workspace:*"
+    "@kalera/munin-sdk": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

@@ -14,19 +14,19 @@ export MUNIN_BACKOFF_MS="300"
 ## 2) Build adapter
 
 ```bash
-pnpm --filter @munin/antigravity build
+pnpm --filter @kalera/munin-antigravity build
 ```
 
 ## 3) Lấy capabilities
 
 ```bash
-pnpm --filter @munin/antigravity exec munin-antigravity capabilities
+pnpm --filter @kalera/munin-antigravity exec munin-antigravity capabilities
 ```
 
 ## 4) Gọi action mẫu
 
 ```bash
-pnpm --filter @munin/antigravity exec munin-antigravity list '{"limit":10}'
+pnpm --filter @kalera/munin-antigravity exec munin-antigravity list '{"limit":10}'
 ```
 
 ## 5) Notes production hardening

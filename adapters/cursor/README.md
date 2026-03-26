@@ -8,7 +8,7 @@
 ## Usage
 
 ```ts
-import { createCursorMuninAdapter } from "@munin/cursor";
+import { createCursorMuninAdapter } from "@kalera/munin-cursor";
 
 const adapter = createCursorMuninAdapter({
   baseUrl: process.env.MUNIN_BASE_URL!,

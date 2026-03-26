@@ -1,5 +1,5 @@
 {
-  "name": "@munin/antigravity",
+  "name": "@kalera/munin-antigravity",
   "version": "0.1.0",
   "type": "module",
   "bin": {
@@ -11,8 +11,8 @@
     "test": "echo 'adapter-google-antigravity tests: pending'"
   },
   "dependencies": {
-    "@munin/sdk": "workspace:*",
-    "@munin/runtime": "workspace:*"
+    "@kalera/munin-sdk": "workspace:*",
+    "@kalera/munin-runtime": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

@@ -2,10 +2,10 @@
 
 | Platform | Adapter | Status | Core Actions | Notes |
 |---|---|---|---|---|
-| Cursor | `@munin/cursor` | Scaffold | ✅ | Ready for integration wiring |
-| Claude Code | `@munin/claude` | Scaffold | ✅ | Generic execute dispatch |
-| Gemini CLI | `@munin/gemini` | Scaffold | ✅ | callTool dispatch |
-| Kilo Code | `@munin/kilo` | Scaffold | ✅ | Bootstrapped from template |
-| Qwen Code | `@munin/qwen` | Scaffold | ✅ | Bootstrapped from template |
+| Cursor | `@kalera/munin-cursor` | Scaffold | ✅ | Ready for integration wiring |
+| Claude Code | `@kalera/munin-claude` | Scaffold | ✅ | Generic execute dispatch |
+| Gemini CLI | `@kalera/munin-gemini` | Scaffold | ✅ | callTool dispatch |
+| Kilo Code | `@kalera/munin-kilo` | Scaffold | ✅ | Bootstrapped from template |
+| Qwen Code | `@kalera/munin-qwen` | Scaffold | ✅ | Bootstrapped from template |
 | OpenClaw | Template | Planned | ⚪ | Next target from generic template |
 | Google Antigravity | Template | Planned | ⚪ | Next target from generic template |

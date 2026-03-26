@@ -1,5 +1,5 @@
 ---
-name: "@munin/openclaw"
+name: "@kalera/munin-openclaw"
 description: "Munin - The $1.6/mo Persistent Memory for OpenClaw. Stop your agent from having Alzheimer's."
 version: "0.1.0"
 metadata:
