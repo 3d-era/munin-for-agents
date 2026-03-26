@@ -3,7 +3,7 @@ import {
   loadCliEnv,
   parseCliArgs,
   safeError,
-} from "munin/runtime/dist/index.js";
+} from "@munin/runtime/dist/index.js";
 import { createAntigravityMuninAdapter } from "./index.js";
 
 async function main() {
