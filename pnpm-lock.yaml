@@ -30,10 +30,10 @@ importers:
 
   adapters/antigravity:
     dependencies:
-      munin/runtime:
+      '@kalera/munin-runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
-      munin/sdk:
+      '@kalera/munin-sdk':
         specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
@@ -43,10 +43,10 @@ importers:
 
   adapters/claude:
     dependencies:
-      munin/runtime:
+      '@kalera/munin-runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
-      munin/sdk:
+      '@kalera/munin-sdk':
         specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
@@ -56,10 +56,10 @@ importers:
 
   adapters/cursor:
     dependencies:
-      munin/runtime:
+      '@kalera/munin-runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
-      munin/sdk:
+      '@kalera/munin-sdk':
         specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
@@ -69,10 +69,10 @@ importers:
 
   adapters/gemini:
     dependencies:
-      munin/runtime:
+      '@kalera/munin-runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
-      munin/sdk:
+      '@kalera/munin-sdk':
         specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
@@ -82,7 +82,7 @@ importers:
 
   adapters/kilo:
     dependencies:
-      munin/sdk:
+      '@kalera/munin-sdk':
         specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
@@ -92,10 +92,10 @@ importers:
 
   adapters/openclaw:
     dependencies:
-      munin/runtime:
+      '@kalera/munin-runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
-      munin/sdk:
+      '@kalera/munin-sdk':
         specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
@@ -105,7 +105,7 @@ importers:
 
   adapters/qwen:
     dependencies:
-      munin/sdk:
+      '@kalera/munin-sdk':
         specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
@@ -115,12 +115,12 @@ importers:
 
   packages/runtime:
     dependencies:
+      '@kalera/munin-sdk':
+        specifier: workspace:*
+        version: link:../ts-sdk
       '@modelcontextprotocol/sdk':
         specifier: ^1.27.1
         version: 1.27.1(zod@4.3.6)
-      munin/sdk:
-        specifier: workspace:*
-        version: link:../ts-sdk
     devDependencies:
       typescript:
         specifier: ^5.9.2
