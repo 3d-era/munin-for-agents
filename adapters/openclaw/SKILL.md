@@ -42,9 +42,9 @@ Data is sent ONLY to your `MUNIN_BASE_URL`. We don't phone home. We don't sell y
 
 ## 🚀 Setup (Fast & Honest)
 
-1. **Get your Munin instance:** Self-host it or grab a cloud key at [munin.ai](https://munin.ai).
+1. **Get your Munin instance:** Self-host it or grab a cloud key at [munin.kalera.app](https://munin.kalera.app).
 2. **Configure OpenClaw:** Add these to your `.env` or agent config:
-   - `MUNIN_BASE_URL`: Where your Munin lives (e.g., `https://api.munin.ai`).
+   - `MUNIN_BASE_URL`: Where your Munin lives (e.g., `https://munin.kalera.dev`).
    - `MUNIN_PROJECT`: Your project name (e.g., `research-agent`).
    - `MUNIN_API_KEY`: Your key to the kingdom.
 
