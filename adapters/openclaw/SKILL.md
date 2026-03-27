@@ -1,7 +1,7 @@
 ---
 name: "@kalera/munin-openclaw"
 description: "Munin - The $1.6/mo Persistent Memory for OpenClaw. Stop your agent from having Alzheimer's."
-version: "0.1.0"
+version: "1.0.0"
 metadata:
   clawdbot:
     type: "plugin"
@@ -37,6 +37,13 @@ Data stays where you tell it to stay. If you self-host, it never leaves your ser
 
 **External Endpoints:**
 Data is sent ONLY to your `MUNIN_BASE_URL`. We don't phone home. We don't sell your "memories" to train models.
+
+## 💎 Quantum E2EE (Elite Tier)
+
+If your Munin project has **Quantum E2EE** enabled, standard E2EE rules apply PLUS:
+- You **MUST** generate a vector embedding of the plaintext content locally before encrypting.
+- You **MUST** include the embedding array in the `store` payload: `{ "content": "encrypted...", "embedding": [0.1, -0.02, ...], "encryptionMeta": {...} }`.
+- Munin will use this vector for zero-knowledge semantic search. It will reject the request if the embedding is missing.
 
 ---
 
