@@ -26,7 +26,7 @@ async function main() {
     const adapter = createOpenClawMuninAdapter({
       baseUrl: env.baseUrl,
       apiKey: env.apiKey,
-      project: env.project,
+      
       timeoutMs: env.timeoutMs,
     });
 
@@ -34,7 +34,7 @@ async function main() {
       if (action === "capabilities") {
         return { ok: true, data: await adapter.capabilities() };
       }
-      return adapter.execute(action, payload);
+      const { projectId, ...p } = payload; if (!projectId) throw new Error("projectId required in payload"); return adapter.execute(projectId as string, action, p);
     }, env.retries, env.backoffMs);
 
     console.log(JSON.stringify(result, null, 2));

@@ -12,7 +12,6 @@ export async function startMcpServer() {
 
   const client = new MuninClient({
     baseUrl: env.baseUrl,
-    project: env.project,
     apiKey: env.apiKey,
     timeoutMs: env.timeoutMs,
   });
@@ -20,7 +19,7 @@ export async function startMcpServer() {
   const server = new Server(
     {
       name: "munin-mcp-server",
-      version: "0.1.0",
+      version: "1.0.0",
     },
     {
       capabilities: {
@@ -38,6 +37,7 @@ export async function startMcpServer() {
           inputSchema: {
             type: "object",
             properties: {
+              projectId: { type: "string", description: "The Munin Project ID (get this from your workspace rules/instructions)" },
               key: { type: "string", description: "Unique identifier for this memory" },
               content: { type: "string", description: "The content to remember" },
               title: { type: "string", description: "Optional title" },
@@ -47,7 +47,7 @@ export async function startMcpServer() {
                 description: "List of tags, e.g. ['planning', 'frontend']"
               }
             },
-            required: ["key", "content"],
+            required: ["projectId", "key", "content"],
           },
         },
         {
@@ -56,9 +56,10 @@ export async function startMcpServer() {
           inputSchema: {
             type: "object",
             properties: {
+              projectId: { type: "string", description: "The Munin Project ID" },
               key: { type: "string", description: "Unique identifier" },
             },
-            required: ["key"],
+            required: ["projectId", "key"],
           },
         },
         {
@@ -67,11 +68,12 @@ export async function startMcpServer() {
           inputSchema: {
             type: "object",
             properties: {
+              projectId: { type: "string", description: "The Munin Project ID" },
               query: { type: "string", description: "Search query" },
               tags: { type: "array", items: { type: "string" } },
               limit: { type: "number", description: "Max results (default: 10)" },
             },
-            required: ["query"],
+            required: ["projectId", "query"],
           },
         },
         {
@@ -80,9 +82,11 @@ export async function startMcpServer() {
           inputSchema: {
             type: "object",
             properties: {
+              projectId: { type: "string", description: "The Munin Project ID" },
               limit: { type: "number" },
               offset: { type: "number" },
             },
+            required: ["projectId"],
           },
         },
         {
@@ -91,8 +95,10 @@ export async function startMcpServer() {
           inputSchema: {
             type: "object",
             properties: {
+              projectId: { type: "string", description: "The Munin Project ID" },
               limit: { type: "number" },
             },
+            required: ["projectId"],
           },
         },
       ],
@@ -102,23 +108,32 @@ export async function startMcpServer() {
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     try {
       const args = request.params.arguments || {};
+      const projectId = args.projectId as string;
+      
+      if (!projectId) {
+        throw new Error("projectId is required");
+      }
+
+      // Remove projectId from args before sending as payload
+      const { projectId: _ignored, ...payload } = args;
+
       let result;
 
       switch (request.params.name) {
         case "munin_store_memory":
-          result = await client.store(args);
+          result = await client.store(projectId, payload);
           break;
         case "munin_retrieve_memory":
-          result = await client.retrieve(args);
+          result = await client.retrieve(projectId, payload);
           break;
         case "munin_search_memories":
-          result = await client.search(args);
+          result = await client.search(projectId, payload);
           break;
         case "munin_list_memories":
-          result = await client.list(args);
+          result = await client.list(projectId, payload);
           break;
         case "munin_recent_memories":
-          result = await client.recent(args);
+          result = await client.recent(projectId, payload);
           break;
         default:
           throw new Error(`Unknown tool: ${request.params.name}`);

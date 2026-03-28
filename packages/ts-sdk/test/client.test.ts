@@ -47,14 +47,13 @@ async function run() {
 
   const client = new MuninClient({
     baseUrl: "http://localhost:4000",
-    project: "default",
     fetchImpl: fakeFetch,
   });
 
   const capabilities = await client.capabilities();
   assert.equal(capabilities.specVersion, "v1.0.0");
 
-  const result = await client.store({ key: "hello", content: "world" });
+  const result = await client.store("default", { key: "hello", content: "world" });
   assert.equal(result.ok, true);
   assert.equal((result.data as any).echoedAction, "store");
 

@@ -16,7 +16,6 @@ const DEFAULT_TIMEOUT_MS = 15_000;
 export class MuninClient {
   private readonly baseUrl: string;
   private readonly apiKey?: string;
-  private readonly project: string;
   private readonly timeoutMs: number;
   private readonly fetchImpl: typeof fetch;
   private capabilitiesCache?: MuninCapabilities;
@@ -24,7 +23,6 @@ export class MuninClient {
   constructor(config: MuninClientConfig) {
     this.baseUrl = config.baseUrl.replace(/\/$/, "");
     this.apiKey = config.apiKey;
-    this.project = config.project;
     this.timeoutMs = config.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.fetchImpl = config.fetchImpl ?? fetch;
   }
@@ -44,6 +42,7 @@ export class MuninClient {
   }
 
   async invoke<TPayload extends Record<string, unknown>, TData = unknown>(
+    projectId: string,
     action: MuninAction,
     payload: TPayload,
     options?: { requestId?: string; ensureCapability?: boolean },
@@ -60,13 +59,14 @@ export class MuninClient {
 
     const request = {
       apiKey: this.apiKey,
-      projectId: this.project,
+      project: projectId,
+      projectId: projectId, // Fallback for un-restarted server
       action,
       payload,
       requestId: options?.requestId,
       client: {
         name: "@kalera/munin-sdk",
-        version: "0.1.0",
+        version: "1.0.0",
       },
     };
 
@@ -91,8 +91,13 @@ export class MuninClient {
     const body = (await response.json()) as any;
 
     if (!response.ok || (body.ok === false) || (body.success === false)) {
+      let errObj = body.error;
+      if (typeof errObj === 'string') {
+        errObj = { code: "INTERNAL_ERROR", message: errObj };
+      }
+      
       throw new MuninSdkError(
-        body.error ?? {
+        errObj ?? {
           code: "INTERNAL_ERROR",
           message: `Unexpected failure invoking action '${action}'`,
         },
@@ -102,23 +107,23 @@ export class MuninClient {
     return body;
   }
 
-  async store(payload: Record<string, unknown>) {
-    return this.invoke("store", payload, { ensureCapability: true });
+  async store(projectId: string, payload: Record<string, unknown>) {
+    return this.invoke(projectId, "store", payload, { ensureCapability: true });
   }
 
-  async retrieve(payload: Record<string, unknown>) {
-    return this.invoke("retrieve", payload, { ensureCapability: true });
+  async retrieve(projectId: string, payload: Record<string, unknown>) {
+    return this.invoke(projectId, "retrieve", payload, { ensureCapability: true });
   }
 
-  async search(payload: Record<string, unknown>) {
-    return this.invoke("search", payload, { ensureCapability: true });
+  async search(projectId: string, payload: Record<string, unknown>) {
+    return this.invoke(projectId, "search", payload, { ensureCapability: true });
   }
 
-  async list(payload: Record<string, unknown> = {}) {
-    return this.invoke("list", payload, { ensureCapability: true });
+  async list(projectId: string, payload: Record<string, unknown> = {}) {
+    return this.invoke(projectId, "list", payload, { ensureCapability: true });
   }
 
-  async recent(payload: Record<string, unknown> = {}) {
-    return this.invoke("recent", payload, { ensureCapability: true });
+  async recent(projectId: string, payload: Record<string, unknown> = {}) {
+    return this.invoke(projectId, "recent", payload, { ensureCapability: true });
   }
 }

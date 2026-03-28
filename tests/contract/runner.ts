@@ -56,7 +56,6 @@ async function runForManifest(manifestPath: string): Promise<boolean> {
   const manifest = loadManifest(manifestPath);
   const client = new MuninClient({
     baseUrl: resolveBaseUrl(manifest.baseUrl),
-    project: manifest.project,
     apiKey: manifest.apiKey,
   });
 

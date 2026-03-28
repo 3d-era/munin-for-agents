@@ -3,24 +3,22 @@ import { MuninClient } from "@kalera/munin-sdk";
 export function createGeminiCliMuninAdapter(config: {
   baseUrl: string;
   apiKey?: string;
-  project: string;
   timeoutMs?: number;
 }) {
   const client = new MuninClient(config);
 
   return {
-    callTool: async (name: string, args: Record<string, unknown>) =>
-      client.invoke(name as any, args, { ensureCapability: true }),
+    callTool: async (projectId: string, name: string, args: Record<string, unknown>) =>
+      client.invoke(projectId, name as any, args, { ensureCapability: true }),
     capabilities: () => client.capabilities(),
   };
 }
 
 // Ensure defaults for Gemini CLI if run as an extension
 const baseUrl = process.env.MUNIN_BASE_URL || "http://127.0.0.1:3237";
-const project = process.env.MUNIN_PROJECT || "default";
 const apiKey = process.env.MUNIN_API_KEY;
 
-const extensionClient = new MuninClient({ baseUrl, project, apiKey });
+const extensionClient = new MuninClient({ baseUrl, apiKey });
 
 export const tools = [
   {
@@ -29,6 +27,7 @@ export const tools = [
     parameters: {
       type: "object",
       properties: {
+        projectId: { type: "string", description: "The Munin Project ID (get this from your instructions)" },
         key: { type: "string", description: "Unique identifier for this memory" },
         content: { type: "string", description: "The content to remember" },
         title: { type: "string", description: "Optional title" },
@@ -38,9 +37,13 @@ export const tools = [
           description: "List of tags, e.g. ['planning', 'frontend']"
         }
       },
-      required: ["key", "content"],
+      required: ["projectId", "key", "content"],
     },
-    execute: async (args: any) => await extensionClient.store(args),
+    execute: async (args: any) => {
+      const { projectId, ...payload } = args;
+      if (!projectId) throw new Error("projectId is required");
+      return await extensionClient.store(projectId, payload);
+    },
   },
   {
     name: "munin_retrieve_memory",
@@ -48,11 +51,16 @@ export const tools = [
     parameters: {
       type: "object",
       properties: {
+        projectId: { type: "string", description: "The Munin Project ID" },
         key: { type: "string", description: "Unique identifier" },
       },
-      required: ["key"],
+      required: ["projectId", "key"],
     },
-    execute: async (args: any) => await extensionClient.retrieve(args),
+    execute: async (args: any) => {
+      const { projectId, ...payload } = args;
+      if (!projectId) throw new Error("projectId is required");
+      return await extensionClient.retrieve(projectId, payload);
+    },
   },
   {
     name: "munin_search_memories",
@@ -60,13 +68,18 @@ export const tools = [
     parameters: {
       type: "object",
       properties: {
+        projectId: { type: "string", description: "The Munin Project ID" },
         query: { type: "string", description: "Search query" },
         tags: { type: "array", items: { type: "string" } },
         limit: { type: "number", description: "Max results (default: 10)" },
       },
-      required: ["query"],
+      required: ["projectId", "query"],
     },
-    execute: async (args: any) => await extensionClient.search(args),
+    execute: async (args: any) => {
+      const { projectId, ...payload } = args;
+      if (!projectId) throw new Error("projectId is required");
+      return await extensionClient.search(projectId, payload);
+    },
   },
   {
     name: "munin_list_memories",
@@ -74,11 +87,17 @@ export const tools = [
     parameters: {
       type: "object",
       properties: {
+        projectId: { type: "string", description: "The Munin Project ID" },
         limit: { type: "number" },
         offset: { type: "number" },
       },
+      required: ["projectId"]
     },
-    execute: async (args: any) => await extensionClient.list(args),
+    execute: async (args: any) => {
+      const { projectId, ...payload } = args;
+      if (!projectId) throw new Error("projectId is required");
+      return await extensionClient.list(projectId, payload);
+    },
   },
   {
     name: "munin_recent_memories",
@@ -86,9 +105,15 @@ export const tools = [
     parameters: {
       type: "object",
       properties: {
+        projectId: { type: "string", description: "The Munin Project ID" },
         limit: { type: "number" },
       },
+      required: ["projectId"]
     },
-    execute: async (args: any) => await extensionClient.recent(args),
+    execute: async (args: any) => {
+      const { projectId, ...payload } = args;
+      if (!projectId) throw new Error("projectId is required");
+      return await extensionClient.recent(projectId, payload);
+    },
   },
 ];

@@ -1,5 +1,5 @@
 name: munin-ai-memory
-version: 0.1.0
+version: 1.0.0
 description: Affordable persistent memory for AI agents ($1.6/mo).
 repository: https://github.com/3d-era/munin-for-agents
 license: MIT

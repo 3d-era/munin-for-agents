@@ -26,7 +26,7 @@ async function main() {
     const adapter = createCursorMuninAdapter({
       baseUrl: env.baseUrl,
       apiKey: env.apiKey,
-      project: env.project,
+      
       timeoutMs: env.timeoutMs,
     });
 
@@ -40,8 +40,14 @@ async function main() {
         throw new Error(`Unsupported action: ${action}`);
       }
 
-      return (handler as (arg: Record<string, unknown>) => Promise<unknown>)(
-        payload,
+      const { projectId, ...actualPayload } = payload;
+      if (!projectId) {
+        throw new Error("projectId is required in payload");
+      }
+
+      return (handler as (pid: string, arg: Record<string, unknown>) => Promise<unknown>)(
+        projectId as string,
+        actualPayload,
       );
     }, env.retries, env.backoffMs);
 

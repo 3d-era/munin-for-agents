@@ -5,7 +5,6 @@ export interface ParsedCliArgs {
 
 export interface CliEnv {
   baseUrl: string;
-  project: string;
   apiKey?: string;
   timeoutMs: number;
   retries: number;
@@ -42,7 +41,6 @@ export function loadCliEnv(): CliEnv {
 
   return {
     baseUrl,
-    project: process.env.MUNIN_PROJECT ?? "default",
     apiKey: process.env.MUNIN_API_KEY,
     timeoutMs: Number(process.env.MUNIN_TIMEOUT_MS ?? 15000),
     retries: Number(process.env.MUNIN_RETRIES ?? 3),

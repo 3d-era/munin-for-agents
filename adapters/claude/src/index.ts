@@ -3,14 +3,14 @@ import { MuninClient } from "@kalera/munin-sdk";
 export function createClaudeCodeMuninAdapter(config: {
   baseUrl: string;
   apiKey?: string;
-  project: string;
+  
   timeoutMs?: number;
 }) {
   const client = new MuninClient(config);
 
   return {
-    execute: async (action: string, payload: Record<string, unknown>) =>
-      client.invoke(action as any, payload, { ensureCapability: true }),
+    execute: async (projectId: string, action: string, payload: Record<string, unknown>) =>
+      client.invoke(projectId, action as any, payload, { ensureCapability: true }),
     capabilities: () => client.capabilities(),
   };
 }

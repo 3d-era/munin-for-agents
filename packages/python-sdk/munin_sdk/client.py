@@ -11,7 +11,6 @@ from .errors import MuninSdkError, MuninTransportError
 @dataclass
 class MuninClient:
     base_url: str
-    project: str
     api_key: str | None = None
     timeout_s: float = 15.0
 
@@ -38,11 +37,11 @@ class MuninClient:
             )
         return body.get("data", {})
 
-    def invoke(self, action: str, payload: dict[str, Any]) -> dict[str, Any]:
+    def invoke(self, project_id: str, action: str, payload: dict[str, Any]) -> dict[str, Any]:
         url = f"{self.base_url.rstrip('/')}/api/mcp/action"
         body = {
             "action": action,
-            "project": self.project,
+            "project": project_id,
             "payload": payload,
             "client": {"name": "munin-sdk-py", "version": "0.1.0"},
         }

@@ -38,7 +38,7 @@ export async function runCoreActionSuite(
   }
 
   try {
-    await client.list({ limit: 1 });
+    await client.list("default", { limit: 1 });
     results.push({
       name: "list-action-smoke",
       passed: true,
