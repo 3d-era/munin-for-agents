@@ -1,14 +1,14 @@
-# MCP API Guide (ContextKeep)
+# Hướng dẫn sử dụng MCP API (ContextKeep)
 
-This document explains the `POST /api/mcp` endpoint using the new simplified action set.
+Tài liệu này hướng dẫn endpoint `POST /api/mcp` với bộ action rút gọn mới.
 
-## General Information
+## Thông tin chung
 
 - **Endpoint:** `POST /api/mcp`
 - **Content-Type:** `application/json`
-- **Auth:** `apiKey` and `projectId` are required
+- **Auth:** bắt buộc có `apiKey` và `projectId`
 
-## Standard Payload
+## Payload chuẩn
 
 ```json
 {
@@ -19,10 +19,10 @@ This document explains the `POST /api/mcp` endpoint using the new simplified act
 }
 ```
 
-## New Actions (Simplified)
+## Action mới (ngắn gọn)
 
 ### 1) `store`
-Create or update a memory by `key`.
+Tạo mới hoặc cập nhật memory theo `key`.
 
 Payload:
 
@@ -44,14 +44,14 @@ Payload:
 }
 ```
 
-Notes:
-- `ttlSeconds > 0` sets expiry using TTL.
-- If both `ttlSeconds` and `expiresAt` are provided, `ttlSeconds` takes priority.
+Ghi chú:
+- `ttlSeconds > 0` sẽ set expiry theo TTL.
+- Nếu có cả `ttlSeconds` và `expiresAt`, ưu tiên `ttlSeconds`.
 
 ---
 
 ### 2) `retrieve`
-Get details for a single memory by `key`.
+Lấy chi tiết 1 memory theo `key`.
 
 Payload:
 
@@ -62,7 +62,7 @@ Payload:
 ---
 
 ### 3) `search`
-Run hybrid search (keyword + semantic), with optional tag filtering.
+Tìm kiếm hybrid (keyword + semantic), hỗ trợ lọc tag.
 
 Payload:
 
@@ -80,7 +80,7 @@ Payload:
 ---
 
 ### 4) `recent`
-Get the 10 most recently updated memories.
+Lấy 10 memories cập nhật gần nhất.
 
 Payload:
 
@@ -91,7 +91,7 @@ Payload:
 ---
 
 ### 5) `list`
-Get all memories in the current project.
+Lấy toàn bộ memories trong project.
 
 Payload:
 
@@ -102,7 +102,7 @@ Payload:
 ---
 
 ### 6) `share`
-Share one or more memories to other projects.
+Share 1 hoặc nhiều memories sang project khác.
 
 Payload:
 
@@ -116,7 +116,7 @@ Payload:
 ---
 
 ### 7) `versions`
-Get version history for a memory.
+Lấy lịch sử version của memory.
 
 Payload:
 
@@ -124,7 +124,7 @@ Payload:
 { "id": "mem_1" }
 ```
 
-or
+hoặc
 
 ```json
 { "key": "unique_key" }
@@ -133,7 +133,7 @@ or
 ---
 
 ### 8) `rollback`
-Rollback a memory to a specific version.
+Rollback memory về version cụ thể.
 
 Payload:
 
@@ -141,7 +141,7 @@ Payload:
 { "id": "mem_1", "version": 2 }
 ```
 
-or
+hoặc
 
 ```json
 { "key": "unique_key", "version": 2 }
@@ -150,7 +150,7 @@ or
 ---
 
 ### 9) `encrypt`
-Encrypt content using AES-256-GCM (PBKDF2 SHA-256).
+Mã hóa content bằng AES-256-GCM (PBKDF2 SHA-256).
 
 Payload:
 
@@ -183,7 +183,7 @@ Response:
 ---
 
 ### 10) `decrypt`
-Decrypt content from `cipherText` + `encryptionMeta`.
+Giải mã content từ `cipherText` + `encryptionMeta`.
 
 Payload:
 
@@ -201,9 +201,9 @@ Payload:
 
 ---
 
-## Legacy Aliases Still Supported
+## Alias cũ vẫn dùng được
 
-Older names are still supported for backward compatibility:
+Các tên cũ vẫn được hỗ trợ để tương thích ngược:
 
 - `store_memory` -> `store`
 - `retrieve_memory` -> `retrieve`
@@ -211,7 +211,7 @@ Older names are still supported for backward compatibility:
 - `list_recent_memories` -> `recent`
 - `list_all_memories` -> `list`
 
-## Error Format
+## Error format
 
 ```json
 {
@@ -219,9 +219,9 @@ Older names are still supported for backward compatibility:
 }
 ```
 
-Common status codes:
-- `401`: missing/invalid `apiKey`
-- `400`: missing required parameters or invalid action
-- `403`: project does not belong to the user
-- `404`: memory/version not found
-- `500`: server error
+Các mã thường gặp:
+- `401`: thiếu/sai `apiKey`
+- `400`: thiếu tham số bắt buộc hoặc action sai
+- `403`: project không thuộc user
+- `404`: không tìm thấy memory/version
+- `500`: lỗi server
