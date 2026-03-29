@@ -38,9 +38,9 @@ Data stays where you tell it to stay. If you self-host, it never leaves your ser
 **External Endpoints:**
 Data is sent ONLY to your `MUNIN_BASE_URL`. We don't phone home. We don't sell your "memories" to train models.
 
-## 💎 Quantum E2EE (Elite Tier)
+## 💎 E2EE with GraphRAG (Elite Tier)
 
-If your Munin project has **Quantum E2EE** enabled, standard E2EE rules apply PLUS:
+If your Munin project has **E2EE with GraphRAG** enabled, standard E2EE rules apply PLUS:
 - You **MUST** generate a vector embedding of the plaintext content locally before encrypting.
 - You **MUST** include the embedding array in the `store` payload: `{ "content": "encrypted...", "embedding": [0.1, -0.02, ...], "encryptionMeta": {...} }`.
 - Munin will use this vector for zero-knowledge semantic search. It will reject the request if the embedding is missing.

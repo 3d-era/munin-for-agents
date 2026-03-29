@@ -80,7 +80,7 @@ Munin hỗ trợ **Zero-Knowledge Encryption**. Nếu project bật E2EE, AI Age
 
 - **Encryption Key:** AI Agent phải lưu `encryptionKey` của project ở nơi an toàn (ví dụ `.env`). **KHÔNG** gửi key này lên server trong các thao tác chuẩn.
 - **Standard E2EE:** Agent BẮT BUỘC mã hóa `content` cục bộ trước khi gọi `store`. Khi gọi `retrieve` hoặc `search`, server trả về `content` đã mã hóa. Agent phải tự giải mã cục bộ bằng key đang lưu.
-- **Quantum E2EE (Elite):** Agent tạo semantic vector cục bộ từ plaintext, sau đó mới mã hóa nội dung. Payload BẮT BUỘC có cả `embedding` vector và `encryptionMeta`.
+- **E2EE with GraphRAG (Elite):** Agent tạo semantic vector cục bộ từ plaintext, sau đó mới mã hóa nội dung. Payload BẮT BUỘC có cả `embedding` vector và `encryptionMeta`.
 
 ### 🔑 Mã hóa & giải mã cục bộ (Zero-Knowledge)
 Khi lấy memory có `encryptionMeta.enabled = true`, `content` sẽ là ciphertext dạng Base64.

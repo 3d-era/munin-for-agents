@@ -75,7 +75,7 @@ Munin supports **Zero-Knowledge Encryption**. If a project has E2EE enabled, AI 
 
 - **Encryption Key:** AI Agents must store the project's `encryptionKey` securely (e.g., in `.env`). **DO NOT** send this key to the server for standard operations.
 - **Standard E2EE:** Agents MUST encrypt the `content` locally before calling `store`. When calling `retrieve` or `search`, the server will return the encrypted `content`. The Agent must decrypt this ciphertext locally using its stored key.
-- **Quantum E2EE (Elite):** Agents generate semantic vectors locally from plaintext, then encrypt the body. The payload MUST include both the `embedding` vector and the `encryptionMeta`.
+- **E2EE with GraphRAG (Elite):** Agents generate semantic vectors locally from plaintext, then encrypt the body. The payload MUST include both the `embedding` vector and the `encryptionMeta`.
 
 ### 🔑 Local Encryption & Decryption (Zero-Knowledge)
 When you fetch a memory with `encryptionMeta.enabled = true`, the `content` will be a Base64-encoded ciphertext. 
