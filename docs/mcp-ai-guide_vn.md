@@ -7,24 +7,25 @@
 ## 🛠 Thông số tích hợp
 
 - **API Endpoint:** `POST /api/mcp`
-- **Auth:** Header `x-api-key: <API_KEY>`
+- **Auth:** Header `Authorization: Bearer <API_KEY>`
 - **Content-Type:** `application/json`
 
 ## 🧠 Các action cốt lõi
 
-API dùng format payload chuẩn: `{ "action": "string", "payload": { ... } }`.
+API dùng format payload chuẩn: `{ "projectId": "string", "action": "string", "payload": { ... } }`.
 
 ### 1. `store` (Lưu memory)
 Lưu insight hoặc context quan trọng. Nên luôn dùng tag cụ thể để đảm bảo cách ly dữ liệu.
 
 ```json
 {
+  "projectId": "id-context-core-cua-pa",
   "action": "store",
   "payload": {
     "key": "unique-slug",
     "title": "Tóm tắt ngắn",
     "content": "Nội dung memory chi tiết...",
-    "tags": ""
+    "tags": ["tag1", "tag2"]
   }
 }
 ```
@@ -34,6 +35,7 @@ Lấy chính xác nội dung memory khi đã biết key.
 
 ```json
 {
+  "projectId": "id-context-core-cua-pa",
   "action": "retrieve",
   "payload": { "key": "unique-slug" }
 }
@@ -44,6 +46,7 @@ Tìm memory liên quan bằng truy vấn văn bản.
 
 ```json
 {
+  "projectId": "id-context-core-cua-pa",
   "action": "search",
   "payload": {
     "query": "How to deploy to AWS?",

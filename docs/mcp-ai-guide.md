@@ -7,23 +7,24 @@
 ## 🛠 Integration Specs
 
 - **API Endpoint:** `POST /api/mcp`
-- **Auth:** Header `x-api-key: <API_KEY>`
+- **Auth:** Header `Authorization: Bearer <API_KEY>`
 - **Content-Type:** `application/json`
 
 ## 🧠 Core Actions
 
-The API uses a standard payload format: `{ "action": "string", "payload": { ... } }`.
+The API uses a standard payload format: `{ "projectId": "string", "action": "string", "payload": { ... } }`.
 
 ### 1. `store` (Save Memory)
 Persist key insights or context. Always use specific tags to maintain isolation.
 ```json
 {
+  "projectId": "your-context-core-id",
   "action": "store",
   "payload": {
     "key": "unique-slug",
     "title": "Short Summary",
     "content": "Detailed memory body...",
-    "tags": ""
+    "tags": ["tag1", "tag2"]
   }
 }
 ```
@@ -32,6 +33,7 @@ Persist key insights or context. Always use specific tags to maintain isolation.
 Get exact memory content if the key is known.
 ```json
 {
+  "projectId": "your-context-core-id",
   "action": "retrieve",
   "payload": { "key": "unique-slug" }
 }
@@ -41,6 +43,7 @@ Get exact memory content if the key is known.
 Find relevant memories using text query.
 ```json
 {
+  "projectId": "your-context-core-id",
   "action": "search",
   "payload": {
     "query": "How to deploy to AWS?",

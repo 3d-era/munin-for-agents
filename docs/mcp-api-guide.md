@@ -6,14 +6,14 @@ This document explains the `POST /api/mcp` endpoint using the new simplified act
 
 - **Endpoint:** `POST /api/mcp`
 - **Content-Type:** `application/json`
-- **Auth:** `apiKey` and `projectId` are required
+- **Auth:** `apiKey` and `projectId` (Context Core ID) are required
 
 ## Standard Payload
 
 ```json
 {
   "apiKey": "YOUR_API_KEY",
-  "projectId": "YOUR_PROJECT_ID",
+  "projectId": "YOUR_CONTEXT_CORE_ID",
   "action": "store",
   "payload": {}
 }
@@ -47,6 +47,8 @@ Payload:
 Notes:
 - `ttlSeconds > 0` sets expiry using TTL.
 - If both `ttlSeconds` and `expiresAt` are provided, `ttlSeconds` takes priority.
+- If `E2EE with GraphRAG` is enabled, you MUST provide an `embedding` array in the payload root (next to `action`).
+- **GraphRAG**: Automatic entity/relationship extraction is performed on `store` if the project is not E2EE.
 
 ---
 
@@ -62,7 +64,8 @@ Payload:
 ---
 
 ### 3) `search`
-Run hybrid search (keyword + semantic), with optional tag filtering.
+Run hybrid search (keyword + semantic), with optional tag filtering. 
+Returns memories, knowledge graph (entities/relationships), and Context Core metadata.
 
 Payload:
 
@@ -91,7 +94,7 @@ Payload:
 ---
 
 ### 5) `list`
-Get all memories in the current project.
+Get all memories in the current context core.
 
 Payload:
 
@@ -102,14 +105,14 @@ Payload:
 ---
 
 ### 6) `share`
-Share one or more memories to other projects.
+Share one or more memories to other context cores.
 
 Payload:
 
 ```json
 {
   "memoryIds": ["mem_1", "mem_2"],
-  "targetProjectIds": ["proj_a", "proj_b"]
+  "targetProjectIds": ["core_a", "core_b"]
 }
 ```
 

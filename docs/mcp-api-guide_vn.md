@@ -6,14 +6,14 @@ Tài liệu này hướng dẫn endpoint `POST /api/mcp` với bộ action rút 
 
 - **Endpoint:** `POST /api/mcp`
 - **Content-Type:** `application/json`
-- **Auth:** bắt buộc có `apiKey` và `projectId`
+- **Auth:** bắt buộc có `apiKey` và `projectId` (Context Core ID)
 
 ## Payload chuẩn
 
 ```json
 {
   "apiKey": "YOUR_API_KEY",
-  "projectId": "YOUR_PROJECT_ID",
+  "projectId": "ID_CONTEXT_CORE_CUA_PA",
   "action": "store",
   "payload": {}
 }
@@ -47,6 +47,8 @@ Payload:
 Ghi chú:
 - `ttlSeconds > 0` sẽ set expiry theo TTL.
 - Nếu có cả `ttlSeconds` và `expiresAt`, ưu tiên `ttlSeconds`.
+- Nếu bật `E2EE with GraphRAG`, pa BẮT BUỘC phải gửi mảng `embedding` trong root payload (nằm cùng cấp với `action`).
+- **GraphRAG**: Tự động bóc tách thực thể/quan hệ khi `store` nếu project không bật E2EE.
 
 ---
 
@@ -63,6 +65,7 @@ Payload:
 
 ### 3) `search`
 Tìm kiếm hybrid (keyword + semantic), hỗ trợ lọc tag.
+Trả về memories, knowledge graph (thực thể/quan hệ), và metadata của Context Core.
 
 Payload:
 
@@ -91,7 +94,7 @@ Payload:
 ---
 
 ### 5) `list`
-Lấy toàn bộ memories trong project.
+Lấy toàn bộ memories trong context core hiện tại.
 
 Payload:
 
@@ -102,14 +105,14 @@ Payload:
 ---
 
 ### 6) `share`
-Share 1 hoặc nhiều memories sang project khác.
+Share 1 hoặc nhiều memories sang các context core khác.
 
 Payload:
 
 ```json
 {
   "memoryIds": ["mem_1", "mem_2"],
-  "targetProjectIds": ["proj_a", "proj_b"]
+  "targetProjectIds": ["core_a", "core_b"]
 }
 ```
 
