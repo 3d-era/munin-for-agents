@@ -1,6 +1,6 @@
 {
   "name": "@kalera/munin-kilo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
