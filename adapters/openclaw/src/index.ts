@@ -13,6 +13,7 @@ export default {
       .default("https://munin.kalera.dev")
       .describe("The base URL for your Munin ContextKeep server."),
     apiKey: z.string().optional().describe("Your API key for Munin."),
+    projectId: z.string().optional().describe("Your Context Core ID (e.g. proj_xxx)."),
   }) as any,
   register(api: any) {
     const baseUrl =
@@ -21,10 +22,12 @@ export default {
       "https://munin.kalera.dev";
     const apiKey =
       (api.pluginConfig?.apiKey as string) || process.env.MUNIN_API_KEY;
+    const projectId =
+      (api.pluginConfig?.projectId as string) || process.env.MUNIN_PROJECT;
 
-    if (!apiKey) {
+    if (!apiKey || !projectId) {
       api.logger.warn(
-        "Munin API key is missing. ContextKeep tools will not be registered.",
+        "Munin apiKey or projectId is missing. ContextKeep tools will not be registered.",
       );
       return;
     }
@@ -36,9 +39,6 @@ export default {
       label: "Store Munin Memory",
       description: "Store a new memory or update an existing one in ContextKeep.",
       parameters: Type.Object({
-        projectId: Type.String({
-          description: "The Context Core ID for isolation.",
-        }),
         key: Type.String({ description: "Unique identifier for the memory." }),
         content: Type.String({ description: "The content of the memory." }),
         tags: Type.Optional(
@@ -48,8 +48,7 @@ export default {
           Type.String({ description: "Human-readable title." }),
         ),
       }),
-      async execute(_toolCallId: string, params: any) {
-        const { projectId, ...payload } = params;
+      async execute(_toolCallId: string, payload: any) {
         const res = await client.invoke(projectId, "store", payload);
         return {
           content: [
@@ -68,13 +67,12 @@ export default {
       label: "Retrieve Munin Memory",
       description: "Retrieve a memory by its key from ContextKeep.",
       parameters: Type.Object({
-        projectId: Type.String({ description: "The Context Core ID." }),
         key: Type.String({
           description: "The unique identifier of the memory.",
         }),
       }),
       async execute(_toolCallId: string, params: any) {
-        const { projectId, key } = params;
+        const { key } = params;
         const res = await client.invoke(projectId, "retrieve", { key });
         return {
           content: [
@@ -93,11 +91,10 @@ export default {
       label: "Search Munin Memories",
       description: "Search for memories by key, title, or content in ContextKeep.",
       parameters: Type.Object({
-        projectId: Type.String({ description: "The Context Core ID." }),
         query: Type.String({ description: "The search term." }),
       }),
       async execute(_toolCallId: string, params: any) {
-        const { projectId, query } = params;
+        const { query } = params;
         const res = await client.invoke(projectId, "search", { query });
         return {
           content: [

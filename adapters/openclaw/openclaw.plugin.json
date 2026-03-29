@@ -15,6 +15,10 @@
       "apiKey": {
         "type": "string",
         "description": "Your API key for Munin."
+      },
+      "projectId": {
+        "type": "string",
+        "description": "Your Context Core ID (e.g. proj_xxx)."
       }
     }
   },
