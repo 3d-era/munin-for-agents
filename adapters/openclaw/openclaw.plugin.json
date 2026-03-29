@@ -1,5 +1,5 @@
 {
-  "id": "munin-memory",
+  "id": "munin-openclaw",
   "name": "Munin",
   "description": "Persistent memory and Context Core for OpenClaw agents.",
   "kind": "memory",
