@@ -50,9 +50,16 @@ If your Munin project has **E2EE with GraphRAG** enabled, standard E2EE rules ap
 ## 🚀 Setup (Fast & Honest)
 
 1. **Get your Munin key:** Grab a **free** cloud key at [munin.kalera.dev](https://munin.kalera.dev).
-2. **Configure OpenClaw:** Add these to your `.env` or agent config:
-   - `MUNIN_BASE_URL`: Where your Munin lives (e.g., `https://munin.kalera.dev`).
-   - `MUNIN_API_KEY`: Your key to the kingdom.
+2. **Configure OpenClaw:** After running `openclaw plugins install @kalera/munin-openclaw`, open your OpenClaw config file (typically `~/.openclaw/openclaw.yaml`) and add your keys under the `munin-memory` plugin settings:
+   ```yaml
+   plugins:
+     entries:
+       munin-memory:
+         config:
+           baseUrl: "https://munin.kalera.dev"
+           apiKey: "your-api-key-here"
+   ```
+   *(Alternatively, you can just set `MUNIN_BASE_URL` and `MUNIN_API_KEY` environment variables).*
 
 *(Note: Provide your agent with the `Context Core ID` in its system prompt so it knows which project to use when making tool calls).*
 
