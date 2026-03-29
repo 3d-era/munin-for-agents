@@ -1,6 +1,6 @@
 ---
 name: "@kalera/munin-openclaw"
-description: "Munin - The $1.6/mo Persistent Memory for OpenClaw. Stop your agent from having Alzheimer's."
+description: "Munin - The Free (or $1.6/mo) Persistent Memory for OpenClaw. Stop your agent from having Alzheimer's."
 version: "1.0.0"
 metadata:
   clawdbot:
@@ -59,3 +59,4 @@ If your Munin project has **E2EE with GraphRAG** enabled, standard E2EE rules ap
 
 ---
 *Built with ❤️ by Kalera for the OpenClaw Ecosystem.*
+ the OpenClaw Ecosystem.*
