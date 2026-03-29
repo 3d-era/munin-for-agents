@@ -33,7 +33,7 @@ We think that's insane.
 ## 🔒 Security & Privacy
 
 **Trust Statement:**
-Data stays where you tell it to stay. If you self-host, it never leaves your server. If you use our cloud, it's encrypted and isolated by project.
+Data stays where you tell it to stay. All data is encrypted locally (if E2EE is enabled) and isolated by your Context Core. We are completely blind to your plaintext.
 
 **External Endpoints:**
 Data is sent ONLY to your `MUNIN_BASE_URL`. We don't phone home. We don't sell your "memories" to train models.
