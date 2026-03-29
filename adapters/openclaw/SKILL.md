@@ -1,7 +1,7 @@
 ---
 name: "@kalera/munin-openclaw"
 description: "Munin - The Free (or $1.6/mo) Persistent Memory for OpenClaw. Stop your agent from having Alzheimer's."
-version: "1.0.0"
+version: "1.0.1"
 metadata:
   clawdbot:
     type: "plugin"
