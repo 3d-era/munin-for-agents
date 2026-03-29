@@ -9,7 +9,7 @@
     "requires": {
       "env": [
         "MUNIN_BASE_URL",
-        "MUNIN_PROJECT"
+        "MUNIN_API_KEY"
       ]
     }
   },

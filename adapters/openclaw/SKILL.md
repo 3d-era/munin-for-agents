@@ -6,7 +6,7 @@ metadata:
   clawdbot:
     type: "plugin"
     permissions:
-      env: ["MUNIN_BASE_URL", "MUNIN_PROJECT", "MUNIN_API_KEY"]
+      env: ["MUNIN_BASE_URL", "MUNIN_API_KEY"]
 ---
 
 # 🐦 Munin: Reliable Memory for Your OpenClaw Agent
@@ -21,9 +21,9 @@ We think that's insane.
 
 | Feature | Mem0 / Zep | **Munin** |
 | :--- | :--- | :--- |
-| **Monthly Cost** | $19.00 - $249.00 | **$1.60** |
+| **Monthly Cost** | $19.00 - $249.00 | **Free** (or $1.60 Pro) |
 | **MCP Support** | Mixed | **Native / First-class** |
-| **Self-Hostable** | OSS (Complex) | **Yes (Simple)** |
+| **Zero-Knowledge E2EE** | Optional / Complex | **Built-in (Client-side)** |
 | **Bullshit Factor** | High (Enterprise-synergy) | **Zero (Developer-first)** |
 
 **That’s a 10x - 150x price gap.** We aren't building "Enterprise Synergy Platforms". We're building a notebook for your AI.
@@ -49,14 +49,14 @@ If your Munin project has **E2EE with GraphRAG** enabled, standard E2EE rules ap
 
 ## 🚀 Setup (Fast & Honest)
 
-1. **Get your Munin instance:** Self-host it or grab a cloud key at [munin.kalera.app](https://munin.kalera.app).
+1. **Get your Munin key:** Grab a **free** cloud key at [munin.kalera.dev](https://munin.kalera.dev).
 2. **Configure OpenClaw:** Add these to your `.env` or agent config:
    - `MUNIN_BASE_URL`: Where your Munin lives (e.g., `https://munin.kalera.dev`).
-   - `MUNIN_PROJECT`: Your project name (e.g., `research-agent`).
    - `MUNIN_API_KEY`: Your key to the kingdom.
+
+*(Note: Provide your agent with the `Context Core ID` in its system prompt so it knows which project to use when making tool calls).*
 
 3. **Profit:** Your agent now has long-term memory. No more repeating yourself.
 
 ---
 *Built with ❤️ by Kalera for the OpenClaw Ecosystem.*
- the OpenClaw Ecosystem.*
