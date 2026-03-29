@@ -15,7 +15,7 @@ Your agent forgets everything the moment you close the tab. You've seen the "pro
 
 We think that's insane. 
 
-**Munin (ContextKeep)** is the pragmatic alternative. It’s the "Reliable Friend" that sits on your agent’s shoulder and whispers: *"Hey, remember when pa Kal said he preferred Python over Node last week?"*
+**Munin** is the pragmatic alternative. It’s the "Reliable Friend" that sits on your agent’s shoulder and whispers: *"Hey, remember when pa Kal said he preferred Python over Node last week?"*
 
 ### 💰 Why Munin? (The "No-Brainer" Math)
 
