@@ -1,7 +1,7 @@
 import { MuninClient } from "@kalera/munin-sdk";
 
 export function createCursorMuninAdapter(config: {
-  baseUrl: string;
+  baseUrl?: string;
   apiKey?: string;
   timeoutMs?: number;
 }) {

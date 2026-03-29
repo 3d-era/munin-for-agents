@@ -1,7 +1,7 @@
 import { MuninClient } from "@kalera/munin-sdk";
 
 export function createGeminiCliMuninAdapter(config: {
-  baseUrl: string;
+  baseUrl?: string;
   apiKey?: string;
   timeoutMs?: number;
 }) {
@@ -15,7 +15,7 @@ export function createGeminiCliMuninAdapter(config: {
 }
 
 // Ensure defaults for Gemini CLI if run as an extension
-const baseUrl = process.env.MUNIN_BASE_URL || "http://127.0.0.1:3237";
+const baseUrl = process.env.MUNIN_BASE_URL || "https://munin.kalera.dev";
 const apiKey = process.env.MUNIN_API_KEY;
 
 const extensionClient = new MuninClient({ baseUrl, apiKey });

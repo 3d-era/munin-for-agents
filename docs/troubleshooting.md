@@ -9,7 +9,7 @@
 - Ensure fallback for optional actions.
 
 ## Contract tests failing
-- Confirm Munin server is running at `MUNIN_BASE_URL`.
+- Confirm Munin server is running at `MUNIN_API_KEY`.
 - Update adapter manifest if endpoint or project changed.
 
 ## Timeout errors
