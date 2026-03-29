@@ -1,6 +1,6 @@
 {
   "name": "@kalera/munin-openclaw",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "openclaw": {
     "extensions": [
@@ -20,12 +20,15 @@
   },
   "dependencies": {
     "@kalera/munin-sdk": "workspace:*",
-    "@kalera/munin-runtime": "workspace:*"
+    "@kalera/munin-runtime": "workspace:*",
+    "@sinclair/typebox": "^0.34.49",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@sinclair/typebox": "^0.34.49",
     "openclaw": "^2026.3.28",
-    "typescript": "^5.9.2",
-    "zod": "^4.3.6"
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": {
+    "openclaw": "^2026.3.0"
   }
 }
