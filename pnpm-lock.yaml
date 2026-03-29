@@ -98,19 +98,19 @@ importers:
       '@kalera/munin-sdk':
         specifier: workspace:*
         version: link:../../packages/ts-sdk
-    devDependencies:
       '@sinclair/typebox':
         specifier: ^0.34.49
         version: 0.34.49
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
       openclaw:
         specifier: ^2026.3.28
         version: 2026.3.28(@napi-rs/canvas@0.1.97)
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
-      zod:
-        specifier: ^4.3.6
-        version: 4.3.6
 
   adapters/qwen:
     dependencies:
