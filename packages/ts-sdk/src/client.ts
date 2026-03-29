@@ -20,11 +20,11 @@ export class MuninClient {
   private readonly fetchImpl: typeof fetch;
   private capabilitiesCache?: MuninCapabilities;
 
-  constructor(config: MuninClientConfig) {
-    this.baseUrl = config.baseUrl.replace(/\/$/, "");
-    this.apiKey = config.apiKey;
-    this.timeoutMs = config.timeoutMs ?? DEFAULT_TIMEOUT_MS;
-    this.fetchImpl = config.fetchImpl ?? fetch;
+  constructor(config?: MuninClientConfig) {
+    this.baseUrl = (config?.baseUrl || "https://munin.kalera.dev").replace(/\/$/, "");
+    this.apiKey = config?.apiKey;
+    this.timeoutMs = config?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+    this.fetchImpl = config?.fetchImpl ?? fetch;
   }
 
   async capabilities(forceRefresh = false): Promise<MuninCapabilities> {

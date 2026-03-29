@@ -34,13 +34,8 @@ export function parseCliArgs(argv: string[], usage: string): ParsedCliArgs {
 }
 
 export function loadCliEnv(): CliEnv {
-  const baseUrl = process.env.MUNIN_BASE_URL;
-  if (!baseUrl) {
-    throw new Error("MUNIN_BASE_URL is required");
-  }
-
   return {
-    baseUrl,
+    baseUrl: "https://munin.kalera.dev",
     apiKey: process.env.MUNIN_API_KEY,
     timeoutMs: Number(process.env.MUNIN_TIMEOUT_MS ?? 15000),
     retries: Number(process.env.MUNIN_RETRIES ?? 3),

@@ -55,7 +55,7 @@ export interface MuninResponse<TData = unknown> {
 }
 
 export interface MuninClientConfig {
-  baseUrl: string;
+  baseUrl?: string;
   apiKey?: string;
   timeoutMs?: number;
   fetchImpl?: typeof fetch;
