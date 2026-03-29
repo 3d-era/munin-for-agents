@@ -1,21 +1,25 @@
-# Munin Adapter for OpenClaw
+# Munin Plugin for OpenClaw
 
 ## Install
 
 ```bash
-pnpm --filter munin/openclaw build
+openclaw plugins install @kalera/munin-openclaw
 ```
 
-## Run
+## Configure
 
-```bash
-MUNIN_BASE_URL=http://localhost:4000 \
-MUNIN_PROJECT=default \
-munin-openclaw capabilities
-```
+Set your Munin API Key and Context Core ID:
 
 ```bash
-MUNIN_BASE_URL=http://localhost:4000 \
-MUNIN_PROJECT=default \
-munin-openclaw search '{"query":"munin"}'
+openclaw config set plugins.entries.munin-openclaw.config.apiKey "YOUR_API_KEY_HERE"
+openclaw config set plugins.entries.munin-openclaw.config.projectId "YOUR_CONTEXT_CORE_ID"
 ```
+
+## Usage
+
+This plugin natively registers 3 tools inside the OpenClaw agent:
+- `munin_store_memory`
+- `munin_retrieve_memory`
+- `munin_search_memories`
+
+The agent will automatically use them to persist and retrieve long-term context.
