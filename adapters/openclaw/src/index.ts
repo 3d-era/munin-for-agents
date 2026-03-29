@@ -1,9 +1,8 @@
-import { definePluginEntry } from "openclaw/plugin-sdk/core";
 import { MuninClient } from "@kalera/munin-sdk";
 import { Type } from "@sinclair/typebox";
 import { z } from "zod";
 
-export default definePluginEntry({
+export default {
   id: "munin-memory",
   name: "Munin",
   description: "Persistent memory tools for OpenClaw agents.",
@@ -13,9 +12,9 @@ export default definePluginEntry({
       .string()
       .default("https://munin.kalera.dev")
       .describe("The base URL for your Munin server."),
-    apiKey: z.string().describe("Your API key for Munin."),
+    apiKey: z.string().optional().describe("Your API key for Munin."),
   }) as any,
-  register(api) {
+  register(api: any) {
     const baseUrl =
       (api.pluginConfig?.baseUrl as string) ||
       process.env.MUNIN_BASE_URL ||
@@ -112,4 +111,4 @@ export default definePluginEntry({
       },
     });
   },
-});
+};
