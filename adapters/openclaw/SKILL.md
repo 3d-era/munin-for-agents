@@ -53,7 +53,7 @@ If your Munin project has **E2EE with GraphRAG** enabled, standard E2EE rules ap
 2. **Configure OpenClaw:** Once installed via `openclaw plugins install @kalera/munin-openclaw`, you can set your API key directly via the OpenClaw CLI without manually editing any config files:
 
    ```bash
-   openclaw config set plugins.entries.munin-memory.config.apiKey "your-api-key-here"
+   openclaw config set plugins.entries.munin-openclaw.config.apiKey "your-api-key-here"
    ```
    *(Alternatively, you can just set `MUNIN_BASE_URL` and `MUNIN_API_KEY` environment variables).*
 

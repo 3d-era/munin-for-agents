@@ -3,7 +3,7 @@ import { Type } from "@sinclair/typebox";
 import { z } from "zod";
 
 export default {
-  id: "munin-memory",
+  id: "munin-openclaw",
   name: "Munin ContextKeep",
   description: "Persistent memory tools for OpenClaw agents.",
   kind: "memory",
