@@ -1,10 +1,10 @@
 {
   "name": "@kalera/munin-openclaw",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "openclaw": {
     "extensions": [
-      "./dist/cli.js"
+      "./dist/index.js"
     ],
     "requires": {
       "env": [
@@ -12,9 +12,6 @@
         "MUNIN_API_KEY"
       ]
     }
-  },
-  "bin": {
-    "munin-openclaw": "dist/cli.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -26,6 +23,9 @@
     "@kalera/munin-runtime": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.9.2"
+    "@sinclair/typebox": "^0.34.49",
+    "openclaw": "^2026.3.28",
+    "typescript": "^5.9.2",
+    "zod": "^4.3.6"
   }
 }
