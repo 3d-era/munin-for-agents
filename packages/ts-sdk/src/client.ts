@@ -153,12 +153,16 @@ export class MuninClient {
     
     const entities = (kg.entities || []).map((e: any) => {
       if (e.embedding) delete e.embedding;
-      return `${e.name} (${e.type}): ${e.description}`;
+      return `${e.label || 'Unknown'} (${e.type || 'Unknown'}): ${e.description || ''}`;
     });
 
+    // To make relationships readable without doing a separate map lookup, 
+    // we use the sourceEntityId and targetEntityId directly or map if populated.
     const relationships = (kg.relationships || []).map((r: any) => {
       if (r.embedding) delete r.embedding;
-      return `${r.source} -[${r.relation}]-> ${r.target}`;
+      const source = r.sourceLabel || r.sourceEntityId || 'Unknown';
+      const target = r.targetLabel || r.targetEntityId || 'Unknown';
+      return `${source} -[${r.type || 'Unknown'}]-> ${target}`;
     });
 
     return {
