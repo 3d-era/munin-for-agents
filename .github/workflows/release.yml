@@ -4,11 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Gõ tag muốn release (ví dụ: munin-cursor-v0.1.0)'
+        description: 'Gõ tag muốn release (ví dụ: munin-cursor-v0.1.0, hoặc "all" để release toàn bộ)'
         required: true
-        default: 'munin-cursor-v0.1.0'
+        default: 'all'
   push:
     tags:
+      - "all"
       - "spec-v*"
       - "munin-sdk-v*"
       - "sdk-py-v*"
