@@ -90,6 +90,19 @@ importers:
         specifier: ^5.9.2
         version: 5.9.3
 
+  adapters/mcp-server:
+    dependencies:
+      '@kalera/munin-runtime':
+        specifier: workspace:*
+        version: link:../../packages/runtime
+      '@kalera/munin-sdk':
+        specifier: workspace:*
+        version: link:../../packages/ts-sdk
+    devDependencies:
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
   adapters/openclaw:
     dependencies:
       '@kalera/munin-runtime':

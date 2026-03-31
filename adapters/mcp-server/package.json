@@ -1,0 +1,20 @@
+{
+  "name": "@kalera/munin-mcp-server",
+  "version": "1.2.0",
+  "type": "module",
+  "bin": {
+    "munin-mcp-server": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "echo 'adapter-mcp-server tests: pending'"
+  },
+  "dependencies": {
+    "@kalera/munin-sdk": "workspace:*",
+    "@kalera/munin-runtime": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}

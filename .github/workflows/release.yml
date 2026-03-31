@@ -17,6 +17,7 @@ on:
       - "munin-claude-v*"
       - "munin-gemini-v*"
       - "munin-openclaw-v*"
+      - "munin-mcp-server-v*"
       - "munin-antigravity-v*"
       - "munin-kilo-v*"
       - "munin-qwen-v*"
@@ -75,6 +76,7 @@ jobs:
               munin-claude-v*) echo "target=adapters/claude" >> $GITHUB_OUTPUT ;;
               munin-gemini-v*) echo "target=adapters/gemini" >> $GITHUB_OUTPUT ;;
               munin-openclaw-v*) echo "target=adapters/openclaw" >> $GITHUB_OUTPUT ;;
+              munin-mcp-server-v*) echo "target=adapters/mcp-server" >> $GITHUB_OUTPUT ;;
               munin-antigravity-v*) echo "target=adapters/antigravity" >> $GITHUB_OUTPUT ;;
               munin-kilo-v*) echo "target=adapters/kilo" >> $GITHUB_OUTPUT ;;
               munin-qwen-v*) echo "target=adapters/qwen" >> $GITHUB_OUTPUT ;;
