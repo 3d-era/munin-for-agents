@@ -6,11 +6,43 @@ export function createGeminiCliMuninAdapter(config: {
   timeoutMs?: number;
 }) {
   const client = new MuninClient(config);
+  const baseUrl = (config.baseUrl || "https://munin.kalera.dev").replace(/\/$/, "");
+  const apiKey = config.apiKey;
 
   return {
     callTool: async (projectId: string, name: string, args: Record<string, unknown>) =>
       client.invoke(projectId, name as any, args, { ensureCapability: true }),
     capabilities: () => client.capabilities(),
+    beforeAgent: async (systemPrompt: string): Promise<string> => {
+      if (!apiKey) return systemPrompt;
+      try {
+        const response = await fetch(`${baseUrl}/api/memories/pinned`, {
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+          }
+        });
+        
+        if (!response.ok) {
+          console.warn(`[Munin] Failed to fetch pinned memories: ${response.statusText}`);
+          return systemPrompt;
+        }
+        
+        const memories = await response.json();
+        if (!Array.isArray(memories) || memories.length === 0) {
+          return systemPrompt;
+        }
+        
+        const pinnedContext = memories.slice(0, 5).map((m: any) => 
+          `[${m.key}] ${m.title ? m.title + ': ' : ''}${m.content}`
+        ).join('\n\n');
+        
+        return `${systemPrompt}\n\n### 📌 PINNED CONTEXT (MANDATORY):\n${pinnedContext}`;
+      } catch (error) {
+        console.warn(`[Munin] Error fetching pinned memories:`, error);
+        return systemPrompt;
+      }
+    }
   };
 }
 
@@ -19,6 +51,37 @@ const baseUrl = process.env.MUNIN_BASE_URL || "https://munin.kalera.dev";
 const apiKey = process.env.MUNIN_API_KEY;
 
 const extensionClient = new MuninClient({ baseUrl, apiKey });
+
+export const beforeAgent = async (systemPrompt: string): Promise<string> => {
+  if (!apiKey) return systemPrompt;
+  try {
+    const response = await fetch(`${baseUrl.replace(/\/$/, "")}/api/memories/pinned`, {
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      }
+    });
+    
+    if (!response.ok) {
+      console.warn(`[Munin] Failed to fetch pinned memories: ${response.statusText}`);
+      return systemPrompt;
+    }
+    
+    const memories = await response.json();
+    if (!Array.isArray(memories) || memories.length === 0) {
+      return systemPrompt;
+    }
+    
+    const pinnedContext = memories.slice(0, 5).map((m: any) => 
+      `[${m.key}] ${m.title ? m.title + ': ' : ''}${m.content}`
+    ).join('\n\n');
+    
+    return `${systemPrompt}\n\n### 📌 PINNED CONTEXT (MANDATORY):\n${pinnedContext}`;
+  } catch (error) {
+    console.warn(`[Munin] Error fetching pinned memories:`, error);
+    return systemPrompt;
+  }
+};
 
 export const tools = [
   {
