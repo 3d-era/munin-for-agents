@@ -1,7 +1,7 @@
 {
   "name": "munin-claude-code",
   "version": "1.0.0",
-  "description": "Long-term Memory integration for Claude Code. Qui — your memory turtle companion.",
+  "description": "Long-term Memory integration for Claude Code with E2EE and GraphRAG.",
   "author": {
     "name": "Kalera",
     "email": "hoang.kal@gmail.com"

@@ -72,48 +72,26 @@ Create or edit `.env` in your project root:
 MUNIN_PROJECT=proj_your_project_id
 ```
 
-### 3. Enable the MCP Server
+### 3. Install via Plugin Marketplace
 
-**Option A — Global (recommended, works in any project):**
+The easiest way — Claude Code handles everything automatically:
+
 ```bash
-# Download the Munin MCP wrapper
-curl -fsSL https://raw.githubusercontent.com/3d-era/munin/main/scripts/munin-mcp-wrapper.sh \
-  -o ~/.claude/munin-mcp-wrapper.sh
-chmod +x ~/.claude/munin-mcp-wrapper.sh
+# Add the Munin plugin marketplace
+/plugin marketplace add 3d-era/munin-for-agents
 
-# Enable globally
-claude mcp add --scope user munin bash ~/.claude/munin-mcp-wrapper.sh
+# Install the Munin plugin
+/plugin install munin-claude-code@munin-ecosystem
 ```
 
-**Option B — Project-specific:**
-```bash
-claude mcp add --scope project munin bash -c '
-  ENV_FILE="$(pwd)/.env"
-  if [[ -f "$ENV_FILE" ]]; then
-    while IFS="=" read -r key rest; do
-      [[ "$key" =~ ^[[:space:]]*# ]] && continue
-      [[ -z "$key" ]] && continue
-      key=$(echo "$key" | sed "s/^[[:space:]]*//;s/[[:space:]]*$//")
-      value=$(echo "$rest" | sed "s/^[[:space:]]*//;s/#.*$//;s/[[:space:]]*$//")
-      [[ -n "$value" ]] && export "$key=$value" 2>/dev/null || true
-    done < "$ENV_FILE"
-  fi
-  exec npx @kalera/munin-claude mcp
-'
-```
+That's it! Claude Code will pull the plugin directly from GitHub and set it up. To update later, run `/plugin update munin-claude-code@munin-ecosystem`.
 
-**Option C — From this repo (development):**
+**For development (from local repo):**
 ```bash
-claude mcp add --scope user munin bash -c '
-  PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
-  ENV_FILE="$PROJECT_DIR/.env"
-  if [[ -f "$ENV_FILE" ]]; then
-    grep -E "^MUNIN_PROJECT=" "$ENV_FILE" | while IFS="=" read -r key val; do
-      export "$key=$val"
-    done
-  fi
-  exec npx @kalera/munin-claude mcp
-'
+mkdir -p ~/.claude/plugins/marketplaces/munin/plugins
+ln -sf /path/to/munin/munin-ecosystem/plugins/munin-claude-code \
+  ~/.claude/plugins/marketplaces/munin/plugins/munin-claude-code
+/plugin enable munin-claude-code@munin
 ```
 
 ### 4. Start Using
