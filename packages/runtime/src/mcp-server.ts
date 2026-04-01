@@ -7,12 +7,10 @@ import {
 import { MuninClient } from "@kalera/munin-sdk";
 import { loadCliEnv, safeError } from "./index.js";
 
-export async function startMcpServer() {
-  const env = loadCliEnv();
-
+export function createMcpServerInstance(env: ReturnType<typeof loadCliEnv>) {
   const client = new MuninClient({
     baseUrl: env.baseUrl,
-    apiKey: env.apiKey,
+    apiKey: env.apiKey || 'test-key',
     timeoutMs: env.timeoutMs,
   });
 
@@ -160,6 +158,13 @@ export async function startMcpServer() {
       };
     }
   });
+
+  return server;
+}
+
+export async function startMcpServer() {
+  const env = loadCliEnv();
+  const server = createMcpServerInstance(env);
 
   const transport = new StdioServerTransport();
   await server.connect(transport);
