@@ -2,8 +2,8 @@
   "schemaVersion": "1.0",
   "name": "munin-ecosystem",
   "owner": {
-    "name": "3D Era",
-    "email": "dev@3d-era.com"
+    "name": "Kalera TEam",
+    "email": "munin@kalera.app"
   },
   "metadata": {
     "description": "Munin AI Memory System — Long-term memory for AI agents with GraphRAG"
@@ -16,11 +16,11 @@
         "url": "3d-era/munin-for-agents",
         "path": "plugins/munin-claude-code"
       },
-      "description": "Long-term memory integration for Claude Code. Qui 🐢 — your project's memory companion. Automatically loads relevant memories at session start, saves summaries on exit, and maintains an error catalog.",
+      "description": "Long-term memory integration for Claude Code. Munin 🐦‍⬛ — your project's memory companion. Automatically loads relevant memories at session start, saves summaries on exit, and maintains an error catalog.",
       "version": "1.0.0",
       "author": {
-        "name": "3D Era",
-        "email": "dev@3d-era.com"
+        "name": "Kalera",
+        "email": "munin@kalera.app"
       },
       "homepage": "https://munin.kalera.app",
       "repository": "https://github.com/3d-era/munin-for-agents",
