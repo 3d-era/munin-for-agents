@@ -200,17 +200,17 @@ Tag as `architecture` + `decision`, include timeline/version
 
 ## Resources
 
-| Resource | Link |
-|----------|------|
-| 🌐 **Website** | [munin.kalera.app](https://munin.kalera.app) |
-| 📖 **Docs** | [docs.munin.kalera.app](https://docs.munin.kalera.app) |
-| 💬 **Discord** | [discord.gg/munin](https://discord.gg/munin) |
-| 🐛 **Issues** | [github.com/3d-era/munin/issues](https://github.com/3d-era/munin/issues) |
-| 📦 **npm** | [npmjs.com/package/@kalera/munin-claude](https://npmjs.com/package/@kalera/munin-claude) |
-| 🔌 **Gemini Extension** | [github.com/3d-era/munin-gemini-extension](https://github.com/3d-era/munin-gemini-extension) |
+| Resource | Link                                                                                           |
+|----------|------------------------------------------------------------------------------------------------|
+| 🌐 **Website** | [munin.kalera.app](https://munin.kalera.app)                                                   |
+| 📖 **Docs** | [munin.kalera.app/docs](https://munin.kalera.app/docs)                                         |
+| 💬 **Discord** | Coming soon                                                                                    |
+| 🐛 **Issues** | [github.com/3d-era/munin-for-agents/issues](https://github.com/3d-era/munin-for-agents/issues) |
+| 📦 **npm** | [npmjs.com/package/@kalera/munin-claude](https://npmjs.com/package/@kalera/munin-claude)       |
+| 🔌 **Gemini Extension** | [github.com/3d-era/munin-gemini-extension](https://github.com/3d-era/munin-gemini-extension)   |
 
 ---
 
 ## License
 
-MIT — [github.com/3d-era/munin](https://github.com/3d-era/munin)
+MIT — [github.com/3d-era/munin-for-agents](https://github.com/3d-era/munin-for-agents)
