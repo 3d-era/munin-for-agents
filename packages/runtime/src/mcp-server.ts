@@ -5,7 +5,7 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { MuninClient } from "@kalera/munin-sdk";
-import { loadCliEnv, resolveProjectId, safeError } from "./index.js";
+import { loadCliEnv, resolveProjectId, resolveEncryptionKey, safeError } from "./index.js";
 
 export function createMcpServerInstance(env: ReturnType<typeof loadCliEnv>) {
   const client = new MuninClient({
@@ -101,6 +101,38 @@ export function createMcpServerInstance(env: ReturnType<typeof loadCliEnv>) {
             required: [],
           },
         },
+        {
+          name: "munin_share_memory",
+          description: "Share one or more memories to other projects owned by the same user. The target project must share the same Hash Key to read encrypted content. Requires Pro or Elite tier. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              projectId: { type: "string", description: "Optional. The source project ID." },
+              memoryIds: {
+                type: "array",
+                items: { type: "string" },
+                description: "Array of memory IDs to share",
+              },
+              targetProjectIds: {
+                type: "array",
+                items: { type: "string" },
+                description: "Array of target project IDs to share memories into",
+              },
+            },
+            required: ["memoryIds", "targetProjectIds"],
+          },
+        },
+        {
+          name: "munin_get_project_info",
+          description: "Get current project metadata including E2EE status, tier features, and limits. CRITICAL: Before storing or retrieving memories in an E2EE project, verify the encryption key is set correctly. Shows whether MUNIN_ENCRYPTION_KEY is configured. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              projectId: { type: "string", description: "Optional. Defaults to active project." },
+            },
+            required: [],
+          },
+        },
       ],
     };
   });
@@ -120,24 +152,40 @@ export function createMcpServerInstance(env: ReturnType<typeof loadCliEnv>) {
       // Remove projectId from args before sending as payload
       const { projectId: _ignored, ...payload } = args;
 
+      // Auto-inject encryptionKey from env if not explicitly provided
+      const encryptionKey = (args.encryptionKey as string) || resolveEncryptionKey();
+      const enrichedPayload = encryptionKey ? { ...payload, encryptionKey } : payload;
+
       let result;
 
       switch (request.params.name) {
         case "munin_store_memory":
-          result = await client.store(projectId, payload);
+          result = await client.store(projectId, enrichedPayload);
           break;
         case "munin_retrieve_memory":
-          result = await client.retrieve(projectId, payload);
+          result = await client.retrieve(projectId, enrichedPayload);
           break;
         case "munin_search_memories":
-          result = await client.search(projectId, payload);
+          result = await client.search(projectId, enrichedPayload);
           break;
         case "munin_list_memories":
-          result = await client.list(projectId, payload);
+          result = await client.list(projectId, enrichedPayload);
           break;
         case "munin_recent_memories":
-          result = await client.recent(projectId, payload);
+          result = await client.recent(projectId, enrichedPayload);
           break;
+        case "munin_share_memory":
+          result = await client.invoke(projectId, "share", enrichedPayload);
+          break;
+        case "munin_get_project_info": {
+          const caps = await client.capabilities();
+          result = {
+            ok: true,
+            encryptionKeyConfigured: !!encryptionKey,
+            ...caps,
+          };
+          break;
+        }
         default:
           throw new Error(`Unknown tool: ${request.params.name}`);
       }

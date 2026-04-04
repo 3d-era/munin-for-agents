@@ -1,6 +1,6 @@
 {
   "name": "@kalera/munin-spec",
-  "version": "1.2.0",
+  "version": "1.2.5",
   "private": true,
   "description": "Munin protocol specification and schemas",
   "scripts": {

@@ -126,4 +126,8 @@ export class MuninClient {
   async recent(projectId: string, payload: Record<string, unknown> = {}) {
     return this.invoke(projectId, "recent", payload, { ensureCapability: true });
   }
+
+  async share(projectId: string, memoryIds: string[], targetProjectIds: string[]) {
+    return this.invoke(projectId, "share", { memoryIds, targetProjectIds }, { ensureCapability: true });
+  }
 }

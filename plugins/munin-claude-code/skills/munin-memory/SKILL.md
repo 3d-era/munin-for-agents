@@ -7,7 +7,7 @@ description: Use when user mentions "search memory", "remember", "what did we do
 
 ## What I Do
 
-I give every Claude Code session access to your project's long-term memory. Memories include past tasks, decisions, bugs, architecture choices — everything your team has learned.
+I give every Claude Code session access to your project's long-term memory. Memories include past tasks, decisions, bugs, architecture choices — everything your team has learned. I automatically handle end-to-end encryption if the project has it enabled.
 
 ## MCP Tools
 
@@ -19,6 +19,8 @@ I give every Claude Code session access to your project's long-term memory. Memo
 | `munin_store_memory` | Save new memory with auto-tagging |
 | `munin_diff_memory` | Compare two versions of a memory |
 | `munin_recent_memories` | Fetch most recently updated memories |
+| `munin_share_memory` | Share memories to other projects (Pro/Elite only) |
+| `munin_get_project_info` | Check E2EE status and tier features |
 
 ## Memory Protocol
 
@@ -67,6 +69,36 @@ munin_store_memory({
   tags: ["task", "sepay", "architecture"]
 })
 ```
+
+## End-to-End Encryption (E2EE) Awareness
+
+### Hash Key
+Every E2EE project uses a Hash Key — a password the user set in the WebUI.
+- If the wrong Hash Key is used, ALL memory reads/writes will fail silently or return garbled content.
+- NEVER guess or reset the Hash Key without confirming with the user.
+- NEVER log or output the Hash Key in plain text.
+- NEVER share the Hash Key in chat or memory content.
+
+### Workflow Before Any E2EE Operation
+1. Call `munin_get_project_info` to check E2EE status.
+2. If `encryptionEnabled: true` or `aiPoweredE2EE: true`:
+   - Confirm `MUNIN_ENCRYPTION_KEY` is set in the project's `.env` file.
+   - If NOT set → ask user for the Hash Key, then run:
+     `munin-claude env set MUNIN_ENCRYPTION_KEY <key>`
+3. If `aiPoweredE2EE: true` → `munin_store_memory` payload MUST include an `embedding` field (encrypted vector generated client-side). If missing → server returns HTTP 400 error.
+4. If wrong Hash Key → `munin_retrieve_memory` returns decryption error. Re-confirm the key with the user and update `.env`.
+
+### Sharing Memories Across Projects
+Memories can be shared to other projects on the same account using `munin_share_memory` (Pro/Elite only).
+
+**Prerequisites:** Source and target projects must belong to the same user.
+
+**Workflow:**
+1. Find `memoryIds`: use `munin_list_memories` or `munin_search_memories`
+2. Find `targetProjectIds`: user's other projects (use Dashboard or `GET /projects`)
+3. Call `munin_share_memory({ memoryIds: [...], targetProjectIds: [...] })`
+
+**E2EE Caveat:** Target project must share the same Hash Key to read encrypted content. If target has E2EE ON and key differs → shared memory is unreadable until user updates the target's Hash Key.
 
 ## Integration with GraphRAG
 

@@ -7,6 +7,13 @@ export interface EnvVar {
 }
 
 /**
+ * Resolve the encryption key for E2EE projects from MUNIN_ENCRYPTION_KEY env var.
+ */
+export function resolveEncryptionKey(): string | undefined {
+  return process.env.MUNIN_ENCRYPTION_KEY;
+}
+
+/**
  * Upsert key=value pairs into a .env file.
  * - Existing keys are replaced.
  * - New keys are appended.
