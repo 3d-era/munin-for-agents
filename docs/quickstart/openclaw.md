@@ -11,8 +11,8 @@ Sau khi cài, OpenClaw sẽ tự động nhận diện plugin và expose các `m
 ## 2) Chuẩn bị env
 
 ```bash
-export MUNIN_PROJECT="id-context-core-cua-pa"
-export MUNIN_API_KEY="key-lay-tu-dashboard"
+export MUNIN_PROJECT="pro_xxxx"
+export MUNIN_API_KEY="api-key-from-dashboard"
 export MUNIN_TIMEOUT_MS="15000"
 export MUNIN_RETRIES="3"
 export MUNIN_BACKOFF_MS="300"
