@@ -19,6 +19,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
+    "@kalera/munin-sdk": "link:packages/ts-sdk",
     "@modelcontextprotocol/sdk": "^1.27.1"
   }
 }

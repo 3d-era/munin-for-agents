@@ -24,6 +24,8 @@ export default {
       (api.pluginConfig?.apiKey as string) || process.env.MUNIN_API_KEY;
     const projectId =
       (api.pluginConfig?.projectId as string) || process.env.MUNIN_PROJECT;
+    const encryptionKey =
+      process.env.MUNIN_ENCRYPTION_KEY;
 
     if (!apiKey || !projectId) {
       api.logger.warn(
@@ -34,6 +36,15 @@ export default {
 
     const client = new MuninClient({ baseUrl, apiKey });
 
+    // Helper: inject encryptionKey if set
+    const enrichPayload = (payload: any) =>
+      encryptionKey ? { ...payload, encryptionKey } : payload;
+
+    const handleResult = (res: any) => ({
+      content: [{ type: "text" as const, text: JSON.stringify(res.data, null, 2) }],
+      details: res.data,
+    });
+
     api.registerTool({
       name: "munin_store_memory",
       label: "Store Munin Memory",
@@ -41,24 +52,12 @@ export default {
       parameters: Type.Object({
         key: Type.String({ description: "Unique identifier for the memory." }),
         content: Type.String({ description: "The content of the memory." }),
-        tags: Type.Optional(
-          Type.String({ description: "Comma-separated list of tags." }),
-        ),
-        title: Type.Optional(
-          Type.String({ description: "Human-readable title." }),
-        ),
+        tags: Type.Optional(Type.String({ description: "Comma-separated list of tags." })),
+        title: Type.Optional(Type.String({ description: "Human-readable title." })),
       }),
       async execute(_toolCallId: string, payload: any) {
-        const res = await client.invoke(projectId, "store", payload);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(res.data, null, 2),
-            },
-          ],
-          details: res.data,
-        };
+        const res = await client.invoke(projectId, "store", enrichPayload(payload));
+        return handleResult(res);
       },
     });
 
@@ -67,22 +66,12 @@ export default {
       label: "Retrieve Munin Memory",
       description: "Retrieve a memory by its key from Munin.",
       parameters: Type.Object({
-        key: Type.String({
-          description: "The unique identifier of the memory.",
-        }),
+        key: Type.String({ description: "The unique identifier of the memory." }),
       }),
       async execute(_toolCallId: string, params: any) {
         const { key } = params;
-        const res = await client.invoke(projectId, "retrieve", { key });
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(res.data, null, 2),
-            },
-          ],
-          details: res.data,
-        };
+        const res = await client.invoke(projectId, "retrieve", enrichPayload({ key }));
+        return handleResult(res);
       },
     });
 
@@ -95,16 +84,50 @@ export default {
       }),
       async execute(_toolCallId: string, params: any) {
         const { query } = params;
-        const res = await client.invoke(projectId, "search", { query });
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(res.data, null, 2),
-            },
-          ],
-          details: res.data,
-        };
+        const res = await client.invoke(projectId, "search", enrichPayload({ query }));
+        return handleResult(res);
+      },
+    });
+
+    api.registerTool({
+      name: "munin_list_memories",
+      label: "List Munin Memories",
+      description: "List all memories with pagination support.",
+      parameters: Type.Object({
+        limit: Type.Optional(Type.Number({ description: "Max results (default: 10)." })),
+        offset: Type.Optional(Type.Number({ description: "Pagination offset (default: 0)." })),
+      }),
+      async execute(_toolCallId: string, params: any) {
+        const res = await client.invoke(projectId, "list", enrichPayload(params));
+        return handleResult(res);
+      },
+    });
+
+    api.registerTool({
+      name: "munin_recent_memories",
+      label: "Recent Munin Memories",
+      description: "Get the most recently updated memories.",
+      parameters: Type.Object({
+        limit: Type.Optional(Type.Number({ description: "Max results (default: 10)." })),
+      }),
+      async execute(_toolCallId: string, params: any) {
+        const res = await client.invoke(projectId, "recent", enrichPayload(params));
+        return handleResult(res);
+      },
+    });
+
+    api.registerTool({
+      name: "munin_share_memory",
+      label: "Share Munin Memories",
+      description: "Share one or more memories to other projects. Requires Pro/Elite tier. Target project must share the same Hash Key for encrypted content.",
+      parameters: Type.Object({
+        memoryIds: Type.Array(Type.String(), { description: "Array of memory IDs to share." }),
+        targetProjectIds: Type.Array(Type.String(), { description: "Array of target project IDs." }),
+      }),
+      async execute(_toolCallId: string, params: any) {
+        const { memoryIds, targetProjectIds } = params;
+        const res = await client.invoke(projectId, "share", enrichPayload({ memoryIds, targetProjectIds }));
+        return handleResult(res);
       },
     });
   },
