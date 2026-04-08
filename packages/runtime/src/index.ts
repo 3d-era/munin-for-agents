@@ -37,10 +37,16 @@ export function loadCliEnv(): CliEnv {
   return {
     baseUrl: process.env.MUNIN_BASE_URL || "https://munin.kalera.dev",
     apiKey: process.env.MUNIN_API_KEY,
-    timeoutMs: Number(process.env.MUNIN_TIMEOUT_MS ?? 15000),
-    retries: Number(process.env.MUNIN_RETRIES ?? 3),
-    backoffMs: Number(process.env.MUNIN_BACKOFF_MS ?? 300),
+    timeoutMs: safeParseInt(process.env.MUNIN_TIMEOUT_MS, 15_000),
+    retries: safeParseInt(process.env.MUNIN_RETRIES, 3),
+    backoffMs: safeParseInt(process.env.MUNIN_BACKOFF_MS, 300),
   };
+}
+
+function safeParseInt(envVal: string | undefined, defaultVal: number): number {
+  if (envVal === undefined) return defaultVal;
+  const parsed = Number(envVal);
+  return isNaN(parsed) ? defaultVal : parsed;
 }
 
 /**
@@ -68,6 +74,7 @@ export function resolveProjectId(): string | undefined {
 
 /**
  * Read a .env file and extract MUNIN_PROJECT value.
+ * Uses string split instead of regex to avoid injection from .env content.
  * Returns undefined if file doesn't exist or value not found.
  */
 function resolveEnvFile(filename: string): string | undefined {
@@ -77,12 +84,17 @@ function resolveEnvFile(filename: string): string | undefined {
     if (!fs.existsSync(path)) return undefined;
 
     const content = fs.readFileSync(path, "utf8");
-    const match = content.match(/^MUNIN_PROJECT\s*=\s*(.+)$/m);
-    if (match) {
-      return match[1].trim();
+    const lines = content.split("\n");
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith("MUNIN_PROJECT=")) continue;
+      return trimmed.slice("MUNIN_PROJECT=".length).trim();
     }
-  } catch {
-    // Ignore errors — file might be unreadable
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+      console.error(`[munin-runtime] Failed to read ${filename}:`, error);
+    }
   }
   return undefined;
 }
@@ -95,17 +107,15 @@ export async function executeWithRetry<T>(
   let attempt = 0;
   let lastError: unknown;
 
-  while (attempt <= retries) {
+  while (attempt < retries) {
     try {
       return await task();
     } catch (error) {
       lastError = error;
-      if (attempt === retries) {
-        break;
-      }
+      attempt += 1;
+      if (attempt >= retries) break;
       const jitter = Math.floor(Math.random() * 100);
       await sleep(backoffMs * 2 ** attempt + jitter);
-      attempt += 1;
     }
   }
 
