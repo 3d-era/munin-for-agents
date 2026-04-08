@@ -1,4 +1,5 @@
 import { MuninClient } from "@kalera/munin-sdk";
+import type { MuninAction } from "@kalera/munin-sdk";
 import { Type } from "@sinclair/typebox";
 import { z } from "zod";
 
@@ -14,18 +15,21 @@ export default {
       .describe("The base URL for your Munin server."),
     apiKey: z.string().optional().describe("Your API key for Munin."),
     projectId: z.string().optional().describe("Your Context Core ID (e.g. proj_xxx)."),
-  }) as any,
-  register(api: any) {
+  }),
+  register(api: {
+    logger: { warn: (msg: string) => void };
+    registerTool: (tool: Record<string, unknown>) => void;
+    pluginConfig?: Record<string, unknown>;
+  }) {
     const baseUrl =
-      (api.pluginConfig?.baseUrl as string) ||
+      (api.pluginConfig?.baseUrl as string | undefined) ||
       process.env.MUNIN_BASE_URL ||
       "https://munin.kalera.dev";
     const apiKey =
-      (api.pluginConfig?.apiKey as string) || process.env.MUNIN_API_KEY;
+      (api.pluginConfig?.apiKey as string | undefined) || process.env.MUNIN_API_KEY;
     const projectId =
-      (api.pluginConfig?.projectId as string) || process.env.MUNIN_PROJECT;
-    const encryptionKey =
-      process.env.MUNIN_ENCRYPTION_KEY;
+      (api.pluginConfig?.projectId as string | undefined) || process.env.MUNIN_PROJECT;
+    const encryptionKey = process.env.MUNIN_ENCRYPTION_KEY;
 
     if (!apiKey || !projectId) {
       api.logger.warn(
@@ -36,11 +40,11 @@ export default {
 
     const client = new MuninClient({ baseUrl, apiKey });
 
-    // Helper: inject encryptionKey if set
-    const enrichPayload = (payload: any) =>
+    // Helper: inject encryptionKey if set (only for E2EE-compatible tools)
+    const enrichPayload = (payload: Record<string, unknown>): Record<string, unknown> =>
       encryptionKey ? { ...payload, encryptionKey } : payload;
 
-    const handleResult = (res: any) => ({
+    const handleResult = (res: { data?: unknown }) => ({
       content: [{ type: "text" as const, text: JSON.stringify(res.data, null, 2) }],
       details: res.data,
     });
@@ -55,8 +59,8 @@ export default {
         tags: Type.Optional(Type.String({ description: "Comma-separated list of tags." })),
         title: Type.Optional(Type.String({ description: "Human-readable title." })),
       }),
-      async execute(_toolCallId: string, payload: any) {
-        const res = await client.invoke(projectId, "store", enrichPayload(payload));
+      async execute(_toolCallId: string, payload: Record<string, unknown>) {
+        const res = await client.invoke(projectId, "store" as MuninAction, enrichPayload(payload));
         return handleResult(res);
       },
     });
@@ -68,9 +72,9 @@ export default {
       parameters: Type.Object({
         key: Type.String({ description: "The unique identifier of the memory." }),
       }),
-      async execute(_toolCallId: string, params: any) {
+      async execute(_toolCallId: string, params: Record<string, unknown>) {
         const { key } = params;
-        const res = await client.invoke(projectId, "retrieve", enrichPayload({ key }));
+        const res = await client.invoke(projectId, "retrieve" as MuninAction, enrichPayload({ key }));
         return handleResult(res);
       },
     });
@@ -82,9 +86,9 @@ export default {
       parameters: Type.Object({
         query: Type.String({ description: "The search term." }),
       }),
-      async execute(_toolCallId: string, params: any) {
+      async execute(_toolCallId: string, params: Record<string, unknown>) {
         const { query } = params;
-        const res = await client.invoke(projectId, "search", enrichPayload({ query }));
+        const res = await client.invoke(projectId, "search" as MuninAction, enrichPayload({ query }));
         return handleResult(res);
       },
     });
@@ -97,8 +101,8 @@ export default {
         limit: Type.Optional(Type.Number({ description: "Max results (default: 10)." })),
         offset: Type.Optional(Type.Number({ description: "Pagination offset (default: 0)." })),
       }),
-      async execute(_toolCallId: string, params: any) {
-        const res = await client.invoke(projectId, "list", enrichPayload(params));
+      async execute(_toolCallId: string, params: Record<string, unknown>) {
+        const res = await client.invoke(projectId, "list" as MuninAction, enrichPayload(params));
         return handleResult(res);
       },
     });
@@ -110,8 +114,8 @@ export default {
       parameters: Type.Object({
         limit: Type.Optional(Type.Number({ description: "Max results (default: 10)." })),
       }),
-      async execute(_toolCallId: string, params: any) {
-        const res = await client.invoke(projectId, "recent", enrichPayload(params));
+      async execute(_toolCallId: string, params: Record<string, unknown>) {
+        const res = await client.invoke(projectId, "recent" as MuninAction, enrichPayload(params));
         return handleResult(res);
       },
     });
@@ -124,9 +128,9 @@ export default {
         memoryIds: Type.Array(Type.String(), { description: "Array of memory IDs to share." }),
         targetProjectIds: Type.Array(Type.String(), { description: "Array of target project IDs." }),
       }),
-      async execute(_toolCallId: string, params: any) {
+      async execute(_toolCallId: string, params: Record<string, unknown>) {
         const { memoryIds, targetProjectIds } = params;
-        const res = await client.invoke(projectId, "share", enrichPayload({ memoryIds, targetProjectIds }));
+        const res = await client.invoke(projectId, "share" as MuninAction, enrichPayload({ memoryIds, targetProjectIds }));
         return handleResult(res);
       },
     });

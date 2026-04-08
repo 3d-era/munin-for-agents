@@ -1,5 +1,7 @@
 import { createServer } from "node:http";
 
+const MAX_BODY_BYTES = 1e6; // 1 MB
+
 const host = process.env.MUNIN_CONTRACT_HOST ?? "127.0.0.1";
 const port = Number(process.env.MUNIN_CONTRACT_PORT ?? 4010);
 
@@ -33,9 +35,19 @@ const server = createServer((req, res) => {
     let raw = "";
     req.on("data", (chunk) => {
       raw += chunk;
+      if (raw.length > MAX_BODY_BYTES) {
+        req.destroy();
+      }
     });
     req.on("end", () => {
-      const parsed = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+      let parsed: Record<string, unknown> = {};
+      try {
+        parsed = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+      } catch {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: { code: "INVALID_JSON", message: "Request body must be valid JSON" } }));
+        return;
+      }
       res.setHeader("Content-Type", "application/json");
       res.end(
         JSON.stringify({
@@ -48,6 +60,9 @@ const server = createServer((req, res) => {
           },
         }),
       );
+    });
+    req.on("error", () => {
+      /* connection closed */
     });
     return;
   }
