@@ -1,6 +1,6 @@
 {
   "name": "munin-claude-code",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "Long-term Memory integration for Claude Code with E2EE and GraphRAG.",
   "author": {
     "name": "Kalera",
