@@ -1,4 +1,5 @@
 import { MuninClient } from "@kalera/munin-sdk";
+import { resolveProjectId } from "@kalera/munin-runtime";
 import type { MuninAction } from "@kalera/munin-sdk";
 import { Type } from "@sinclair/typebox";
 import { z } from "zod";
@@ -28,7 +29,9 @@ export default {
     const apiKey =
       (api.pluginConfig?.apiKey as string | undefined) || process.env.MUNIN_API_KEY;
     const projectId =
-      (api.pluginConfig?.projectId as string | undefined) || process.env.MUNIN_PROJECT;
+      (api.pluginConfig?.projectId as string | undefined) ||
+      process.env.MUNIN_PROJECT ||
+      resolveProjectId(); // walk-up fallback for .env files
     const encryptionKey = process.env.MUNIN_ENCRYPTION_KEY;
 
     if (!apiKey || !projectId) {

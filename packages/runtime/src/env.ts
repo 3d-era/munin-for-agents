@@ -91,10 +91,45 @@ function safeParseInt(envVal: string | undefined, defaultVal: number): number {
 }
 
 /**
+ * Walk up the directory tree from `startDir` (default CWD) toward root,
+ * searching each ancestor for `filename`. Returns the value of the first match.
+ * Stops at filesystem root or when a `.git` dir is found (project boundary).
+ */
+function resolveEnvFileUpward(filename: string, startDir?: string): string | undefined {
+  let current = startDir ?? process.cwd();
+  let last = "";
+
+  while (current !== last) {
+    last = current;
+    const filePath = path.join(current, filename);
+    try {
+      if (fs.existsSync(filePath)) {
+        const content = fs.readFileSync(filePath, "utf8");
+        for (const line of content.split("\n")) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("MUNIN_PROJECT=")) continue;
+          return trimmed.slice("MUNIN_PROJECT=".length).trim();
+        }
+      }
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+        console.error(`[munin-runtime] Failed to read ${filePath}:`, error);
+      }
+    }
+
+    // Stop at git root (project boundary)
+    if (fs.existsSync(path.join(current, ".git"))) break;
+
+    current = path.dirname(current);
+  }
+  return undefined;
+}
+
+/**
  * Resolve MUNIN_PROJECT from multiple sources, in priority order:
  * 1. Explicit environment variable
- * 2. .env.local in current working directory
- * 3. .env in current working directory
+ * 2. .env.local in any ancestor directory (walk-up from CWD)
+ * 3. .env in any ancestor directory (walk-up from CWD)
  */
 export function resolveProjectId(): string | undefined {
   // 1. Explicit env var (highest priority)
@@ -102,42 +137,14 @@ export function resolveProjectId(): string | undefined {
     return process.env.MUNIN_PROJECT;
   }
 
-  // 2. .env.local in CWD
-  const envLocal = resolveEnvFile(".env.local");
-  if (envLocal) return envLocal;
+  // 2. Walk upward from CWD — find .env.local in any ancestor dir
+  const fromLocal = resolveEnvFileUpward(".env.local");
+  if (fromLocal) return fromLocal;
 
-  // 3. .env in CWD
-  const envFile = resolveEnvFile(".env");
-  if (envFile) return envFile;
+  // 3. Walk upward from CWD — find .env in any ancestor dir
+  const fromEnv = resolveEnvFileUpward(".env");
+  if (fromEnv) return fromEnv;
 
-  return undefined;
-}
-
-/**
- * Read a .env file and extract MUNIN_PROJECT value.
- * Uses string split instead of regex to avoid injection from .env content.
- * Returns undefined if file doesn't exist or value not found.
- */
-function resolveEnvFile(filename: string): string | undefined {
-  try {
-    const filePath = `${process.cwd()}/${filename}`;
-    if (!fs.existsSync(filePath)) return undefined;
-
-    const content = fs.readFileSync(filePath, "utf8");
-    const lines = content.split("\n");
-
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed.startsWith("MUNIN_PROJECT=")) continue;
-      // value is everything after '='
-      return trimmed.slice("MUNIN_PROJECT=".length).trim();
-    }
-  } catch (error) {
-    // Surface unexpected errors — only ignore ENOENT
-    if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
-      console.error(`[munin-runtime] Failed to read ${filename}:`, error);
-    }
-  }
   return undefined;
 }
 
