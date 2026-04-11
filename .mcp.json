@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "munin": {
+      "command": "bash",
+      "args": [
+        "-c",
+        "WORKSPACE_DIR=$(pwd);\nif [[ -f $WORKSPACE_DIR/.env.local ]]; then MUNIN_PROJECT=$(grep -E '^MUNIN_PROJECT=' $WORKSPACE_DIR/.env.local 2>/dev/null | cut -d= -f2 | tr -d ' \"\\\\' | xargs); [[ -n $MUNIN_PROJECT ]] && export MUNIN_PROJECT; fi;\nif [[ -z $MUNIN_PROJECT && -f $WORKSPACE_DIR/.env ]]; then MUNIN_PROJECT=$(grep -E '^MUNIN_PROJECT=' $WORKSPACE_DIR/.env 2>/dev/null | cut -d= -f2 | tr -d ' \"\\\\' | xargs); [[ -n $MUNIN_PROJECT ]] && export MUNIN_PROJECT; fi;\nexec npx --yes @kalera/munin-claude mcp"
+      ],
+      "env": {}
+    }
+  }
+}
