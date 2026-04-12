@@ -1,6 +1,5 @@
 {
   "name": "@kalera/munin-claude",
-  "version": "1.2.10",
   "type": "module",
   "bin": {
     "munin-claude": "dist/cli.js"

@@ -1,6 +1,3 @@
 packages:
   - packages/*
   - adapters/*
-
-overrides:
-  '@kalera/munin-sdk': link:packages/ts-sdk

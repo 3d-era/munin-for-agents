@@ -26,7 +26,7 @@ export function createMcpServerInstance(
   const server = new Server(
     {
       name: "munin-mcp-server",
-      version: "1.0.0",
+      version: "1.2.9",
     },
     {
       capabilities: {

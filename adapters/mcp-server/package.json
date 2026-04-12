@@ -1,6 +1,5 @@
 {
   "name": "@kalera/munin-mcp-server",
-  "version": "1.2.10",
   "type": "module",
   "main": "dist/cli.js",
   "module": "dist/cli.js",

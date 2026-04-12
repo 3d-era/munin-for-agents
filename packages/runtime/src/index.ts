@@ -110,7 +110,6 @@ export function resolveProjectId(): string | undefined {
   return undefined;
 }
 
-
 export async function executeWithRetry<T>(
   task: () => Promise<T>,
   retries: number,
@@ -155,5 +154,6 @@ function redactText(text: string): string {
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
 export * from "./mcp-server.js";
 export * from "./env.js";
