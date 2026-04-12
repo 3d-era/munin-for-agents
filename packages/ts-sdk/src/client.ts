@@ -35,7 +35,7 @@ export class MuninClient {
     action: MuninAction,
     payload: TPayload,
     options?: { requestId?: string; ensureCapability?: boolean },
-  ): Promise<MuninResponse<TData>> {
+  ): Promise<any> {
     if (options?.ensureCapability) {
       const caps = await this.capabilities();
       if (!isActionSupported(caps, action)) {
@@ -49,81 +49,69 @@ export class MuninClient {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.timeoutMs);
 
-    let response: Response;
-    try {
-      response = await this.fetchImpl(`${this.baseUrl}/api/mcp/action`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(this.apiKey ? { Authorization: `Bearer ${this.apiKey}` } : {}),
+    const response = await this.fetchImpl(`${this.baseUrl}/api/mcp/action`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        apiKey: this.apiKey,
+        project: projectId,
+        projectId, // Fallback for un-restarted server
+        action,
+        payload,
+        requestId: options?.requestId,
+        client: {
+          name: "@kalera/munin-sdk",
+          version: "1.0.0",
         },
-        body: JSON.stringify({
-          action,
-          project: projectId,
-          projectId, // Fallback for un-restarted server
-          payload,
-          requestId: options?.requestId,
-          client: {
-            name: "@kalera/munin-sdk",
-            version: "1.2.9",
-          },
-        }),
-        signal: controller.signal,
-      });
-    } catch (error) {
+      }),
+      signal: controller.signal,
+    }).catch((error: unknown) => {
       clearTimeout(timeout);
       throw new MuninTransportError(
         `Request failed for action '${action}': ${String(error)}`,
       );
-    }
+    });
 
     clearTimeout(timeout);
 
-    let body: unknown;
-    try {
-      body = await response.json();
-    } catch {
-      throw new MuninTransportError(
-        `Invalid JSON response for action '${action}'`,
-      );
-    }
+    const body = (await response.json()) as any;
 
-    if (!response.ok || !isResponseOk(body)) {
-      let errObj = (body as Record<string, unknown>).error;
+    if (!response.ok || (body.ok === false) || (body.success === false)) {
+      let errObj = body.error;
       if (typeof errObj === "string") {
         errObj = { code: "INTERNAL_ERROR", message: errObj };
       }
 
       throw new MuninSdkError(
-        (typeof errObj === "object" && errObj !== null && "code" in errObj && "message" in errObj)
-          ? (errObj as { code: "AUTH_INVALID" | "FEATURE_DISABLED" | "NOT_FOUND" | "RATE_LIMITED" | "VALIDATION_ERROR" | "INTERNAL_ERROR"; message: string })
-          : {
-            code: "INTERNAL_ERROR" as const,
-            message: `Unexpected failure invoking action '${action}'`,
-          },
+        errObj ?? {
+          code: "INTERNAL_ERROR" as const,
+          message: `Unexpected failure invoking action '${action}'`,
+        },
       );
     }
 
-    return body as MuninResponse<TData>;
+    return body as any;
   }
 
-  async store(projectId: string, payload: Record<string, unknown>): Promise<MuninResponse<unknown>> {
+  async store(projectId: string, payload: Record<string, unknown>): Promise<any> {
     return this.invoke(projectId, "store", payload, { ensureCapability: true });
   }
 
-  async retrieve(projectId: string, payload: Record<string, unknown>): Promise<MuninResponse<unknown>> {
+  async retrieve(projectId: string, payload: Record<string, unknown>): Promise<any> {
     return this.invoke(projectId, "retrieve", payload, { ensureCapability: true });
   }
 
-  async search(projectId: string, payload: Record<string, unknown>): Promise<MuninResponse<unknown>> {
+  async search(projectId: string, payload: Record<string, unknown>): Promise<any> {
     return this.invoke(projectId, "search", payload, { ensureCapability: true });
   }
 
-  async list(projectId: string, payload: Record<string, unknown> = {}): Promise<MuninResponse<unknown>> {
+  async list(projectId: string, payload: Record<string, unknown> = {}): Promise<any> {
     return this.invoke(projectId, "list", payload, { ensureCapability: true });
   }
 
-  async recent(projectId: string, payload: Record<string, unknown> = {}): Promise<MuninResponse<unknown>> {
+  async recent(projectId: string, payload: Record<string, unknown> = {}): Promise<any> {
     return this.invoke(projectId, "recent", payload, { ensureCapability: true });
   }
 
@@ -131,14 +119,7 @@ export class MuninClient {
     projectId: string,
     memoryIds: string[],
     targetProjectIds: string[],
-  ): Promise<MuninResponse<unknown>> {
+  ): Promise<any> {
     return this.invoke(projectId, "share", { memoryIds, targetProjectIds }, { ensureCapability: true });
   }
-}
-
-/** Narrow a raw JSON value to a response-like object. */
-function isResponseOk(body: unknown): boolean {
-  if (typeof body !== "object" || body === null) return false;
-  const obj = body as Record<string, unknown>;
-  return obj.ok === true;
 }
