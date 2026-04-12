@@ -1,3 +1,6 @@
+import * as fs from "fs";
+import * as path from "path";
+
 export interface ParsedCliArgs {
   action: string;
   payload: Record<string, unknown>;
@@ -55,9 +58,6 @@ function safeParseInt(envVal: string | undefined, defaultVal: number): number {
  * Stops at filesystem root or when a `.git` dir is found (project boundary).
  */
 function resolveEnvFileUpward(filename: string, startDir?: string): string | undefined {
-  const fs = require("fs") as typeof import("fs");
-  const path = require("path") as typeof import("path");
-
   let current = startDir ?? process.cwd();
   let last = "";
 
