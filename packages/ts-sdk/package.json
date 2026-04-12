@@ -1,6 +1,6 @@
 {
   "name": "@kalera/munin-sdk",
-  "version": "1.2.6",
+  "version": "1.2.8",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

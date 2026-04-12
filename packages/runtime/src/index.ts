@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+
 export interface ParsedCliArgs {
   action: string;
   payload: Record<string, unknown>;
@@ -55,9 +58,6 @@ function safeParseInt(envVal: string | undefined, defaultVal: number): number {
  * Stops at filesystem root or when a `.git` dir is found (project boundary).
  */
 function resolveEnvFileUpward(filename: string, startDir?: string): string | undefined {
-  const fs = require("fs") as typeof import("fs");
-  const path = require("path") as typeof import("path");
-
   let current = startDir ?? process.cwd();
   let last = "";
 
@@ -110,7 +110,6 @@ export function resolveProjectId(): string | undefined {
   return undefined;
 }
 
-
 export async function executeWithRetry<T>(
   task: () => Promise<T>,
   retries: number,
@@ -155,5 +154,6 @@ function redactText(text: string): string {
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
 export * from "./mcp-server.js";
 export * from "./env.js";

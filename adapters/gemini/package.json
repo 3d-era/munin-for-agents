@@ -1,6 +1,6 @@
 {
   "name": "@kalera/munin-gemini",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "type": "module",
   "bin": {
     "munin-gemini": "dist/cli.js"
