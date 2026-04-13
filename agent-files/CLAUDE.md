@@ -1,5 +1,12 @@
 # Munin Claude Code Plugin
 
+> **Full setup guide:** [docs/ai-setup-guide.md](https://github.com/3d-era/munin-for-agents/blob/main/docs/ai-setup-guide.md)
+> **Quick reference:** [agent-files/SETUP.md](https://github.com/3d-era/munin-for-agents/blob/main/agent-files/SETUP.md)
+
+This plugin gives Claude Code persistent memory via Munin Context Core — memories survive across sessions, enabling semantic search, error catalogs, and GraphRAG.
+
+---
+
 ## Memory Index Protocol (MANDATORY)
 
 ### 1. AT START OF EVERY NEW TASK (NON-NEGOTIABLE)
@@ -29,6 +36,8 @@
 - Use `munin_search_memories` for semantic/content-based searches.
 - Results include GraphRAG Entities and Relationships extracted automatically.
 
+---
+
 ## Skill System
 
 This plugin provides 4 specialized skills that activate automatically based on context:
@@ -40,6 +49,10 @@ This plugin provides 4 specialized skills that activate automatically based on c
 | `munin-error-catalog` | "bug", "error", "crash", "doesn't work" | Error resolution |
 | `munin-projectid` | "/munin:projectid", "/projectid" | Set/check MUNIN_PROJECT |
 
+See `plugins/munin-claude-code/skills/` for skill definitions.
+
+---
+
 ## Environment Variables
 
 | Variable | Default | Description |
@@ -48,9 +61,31 @@ This plugin provides 4 specialized skills that activate automatically based on c
 | `MUNIN_BASE_URL` | `https://munin.kalera.dev` | Munin API server |
 | `MUNIN_API_KEY` | *(from dashboard)* | API key for authentication |
 
+**Best way to set (per-project):**
+
+```bash
+munin-claude env set MUNIN_API_KEY <key>
+munin-claude env set MUNIN_PROJECT <project>
+```
+
+Both `MUNIN_API_KEY` and `MUNIN_PROJECT` can be set in `.env.local` at the project root — the runtime walks up the directory tree automatically. See [docs/ai-setup-guide.md](https://github.com/3d-era/munin-for-agents/blob/main/docs/ai-setup-guide.md) for details.
+
+---
+
 ## MCP Server
 
-The plugin runs as an MCP server via `npx @kalera/munin-claude`. The `.mcp.json` reads env vars from your project's `.env` file automatically. Make sure `MUNIN_PROJECT` is set in your `.env` before using MCP tools.
+The plugin runs as an MCP server via `npx @kalera/munin-claude`. The `.mcp.json` reads env vars from your project's `.env.local` file automatically. Make sure `MUNIN_PROJECT` is set in your `.env.local` before using MCP tools.
+
+**Smoke test:**
+
+```bash
+MUNIN_API_KEY="<key>" MUNIN_PROJECT="<project>" \
+npx --yes @kalera/munin-claude call munin_get_project_info '{}'
+```
+
+Expected: `{ "ok": true, ... }`
+
+---
 
 ## Plugin Structure
 
@@ -70,3 +105,5 @@ munin-claude-code/
     ├── munin-error-catalog/
     └── munin-projectid/
 ```
+
+For detailed setup instructions, E2EE guidance, and cross-platform setup, see **[docs/ai-setup-guide.md](https://github.com/3d-era/munin-for-agents/blob/main/docs/ai-setup-guide.md)**.

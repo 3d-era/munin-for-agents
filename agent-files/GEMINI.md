@@ -1,5 +1,12 @@
 # Munin Claude Code Plugin — Gemini Extension
 
+> **Full setup guide:** [docs/ai-setup-guide.md](https://github.com/3d-era/munin-for-agents/blob/main/docs/ai-setup-guide.md)
+> **Quick reference:** [agent-files/SETUP.md](https://github.com/3d-era/munin-for-agents/blob/main/agent-files/SETUP.md)
+
+This extension gives Gemini CLI persistent memory via Munin Context Core — memories survive across sessions, enabling semantic search, error catalogs, and GraphRAG.
+
+---
+
 ## Memory Index Protocol (MANDATORY)
 
 ### 1. AT START OF EVERY NEW TASK (NON-NEGOTIABLE)
@@ -29,6 +36,8 @@
 - Use `munin_search_memories` for semantic/content-based searches.
 - Results include GraphRAG Entities and Relationships extracted automatically.
 
+---
+
 ## Environment Variables
 
 | Variable | Default | Description |
@@ -36,6 +45,17 @@
 | `MUNIN_PROJECT` | *(required)* | Your project ID from munin.kalera.app |
 | `MUNIN_BASE_URL` | `https://munin.kalera.dev` | Munin API server |
 | `MUNIN_API_KEY` | *(from dashboard)* | API key for authentication |
+
+**Best way to set:**
+
+```bash
+export MUNIN_API_KEY="<key>"
+export MUNIN_PROJECT="<project>"
+```
+
+Both `MUNIN_API_KEY` and `MUNIN_PROJECT` can be set in `.env.local` at the project root — the runtime walks up the directory tree automatically. See [docs/ai-setup-guide.md](https://github.com/3d-era/munin-for-agents/blob/main/docs/ai-setup-guide.md) for details.
+
+---
 
 ## Skill System
 
@@ -45,6 +65,8 @@
 | `munin-architecture` | "architecture", "tech stack", "system design" | Architecture context |
 | `munin-error-catalog` | "bug", "error", "crash", "doesn't work" | Error resolution |
 | `munin-projectid` | "/munin:projectid", "/projectid" | Set/check MUNIN_PROJECT |
+
+---
 
 ## Plugin Structure
 
@@ -59,3 +81,5 @@ munin-claude-code/
 │   └── error-catalog-hook.sh
 └── skills/                # 4 specialized skills
 ```
+
+For detailed setup instructions, E2EE guidance, and cross-platform setup, see **[docs/ai-setup-guide.md](https://github.com/3d-era/munin-for-agents/blob/main/docs/ai-setup-guide.md)**.

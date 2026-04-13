@@ -1,5 +1,7 @@
 # Compatibility Matrix (v0)
 
+> **Setup Guide:** For step-by-step agent setup instructions, see [docs/ai-setup-guide.md](https://github.com/3d-era/munin-for-agents/blob/main/docs/ai-setup-guide.md).
+
 | Platform | Adapter | Status | Core Actions | Notes |
 |---|---|---|---|---|
 | Cursor | `@kalera/munin-cursor` | Ready | ✅ | Built-in MCP server |

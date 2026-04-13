@@ -13,7 +13,7 @@ export function createMcpServerInstance(
 ) {
   if (!env.apiKey && !opts?.allowMissingApiKey) {
     throw new Error(
-      "MUNIN_API_KEY is required. Set it in your environment or .env file.",
+      "MUNIN_API_KEY is required. Set it in your environment, or in a .env.local / .env file in your project directory (walked up automatically).",
     );
   }
 
