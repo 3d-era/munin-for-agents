@@ -36,10 +36,26 @@ export function parseCliArgs(argv: string[], usage: string): ParsedCliArgs {
   }
 }
 
+/**
+ * Resolve MUNIN_API_KEY — reads from process.env first, then walks up from CWD
+ * for .env.local / .env files. This mirrors the MUNIN_PROJECT resolution pattern.
+ */
+export function resolveApiKey(): string | undefined {
+  if (process.env.MUNIN_API_KEY) {
+    return process.env.MUNIN_API_KEY;
+  }
+  // Walk upward from CWD — find .env.local first, then .env
+  const fromLocal = resolveEnvFileUpward(".env.local", "MUNIN_API_KEY");
+  if (fromLocal) return fromLocal;
+  const fromEnv = resolveEnvFileUpward(".env", "MUNIN_API_KEY");
+  if (fromEnv) return fromEnv;
+  return undefined;
+}
+
 export function loadCliEnv(): CliEnv {
   return {
     baseUrl: process.env.MUNIN_BASE_URL || "https://munin.kalera.dev",
-    apiKey: process.env.MUNIN_API_KEY,
+    apiKey: resolveApiKey(),
     timeoutMs: safeParseInt(process.env.MUNIN_TIMEOUT_MS, 15_000),
     retries: safeParseInt(process.env.MUNIN_RETRIES, 3),
     backoffMs: safeParseInt(process.env.MUNIN_BACKOFF_MS, 300),
@@ -54,10 +70,15 @@ function safeParseInt(envVal: string | undefined, defaultVal: number): number {
 
 /**
  * Walk up the directory tree from `startDir` (default CWD) toward root,
- * searching each ancestor for `filename`. Returns the value of the first match.
- * Stops at filesystem root or when a `.git` dir is found (project boundary).
+ * searching each ancestor for a .env file containing `key=`. Returns the value
+ * of the first match. Stops at filesystem root or when a `.git` dir is found
+ * (project boundary).
  */
-function resolveEnvFileUpward(filename: string, startDir?: string): string | undefined {
+function resolveEnvFileUpward(
+  filename: string,
+  key: string,
+  startDir?: string,
+): string | undefined {
   let current = startDir ?? process.cwd();
   let last = "";
 
@@ -67,10 +88,11 @@ function resolveEnvFileUpward(filename: string, startDir?: string): string | und
     try {
       if (fs.existsSync(filePath)) {
         const content = fs.readFileSync(filePath, "utf8");
+        const prefix = `${key}=`;
         for (const line of content.split("\n")) {
           const trimmed = line.trim();
-          if (!trimmed.startsWith("MUNIN_PROJECT=")) continue;
-          return trimmed.slice("MUNIN_PROJECT=".length).trim();
+          if (!trimmed.startsWith(prefix)) continue;
+          return trimmed.slice(prefix.length).trim();
         }
       }
     } catch (error) {
@@ -100,11 +122,11 @@ export function resolveProjectId(): string | undefined {
   }
 
   // 2. Walk upward from CWD — find .env.local in any ancestor dir
-  const fromLocal = resolveEnvFileUpward(".env.local");
+  const fromLocal = resolveEnvFileUpward(".env.local", "MUNIN_PROJECT");
   if (fromLocal) return fromLocal;
 
   // 3. Walk upward from CWD — find .env in any ancestor dir
-  const fromEnv = resolveEnvFileUpward(".env");
+  const fromEnv = resolveEnvFileUpward(".env", "MUNIN_PROJECT");
   if (fromEnv) return fromEnv;
 
   return undefined;
