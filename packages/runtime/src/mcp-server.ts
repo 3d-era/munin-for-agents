@@ -132,6 +132,19 @@ export function createMcpServerInstance(
           },
         },
         {
+          name: "munin_diff_memory",
+          description: "Compare two versions of a memory. Returns the differences between the current version and a specified target version. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              projectId: { type: "string", description: "Optional. Defaults to active project." },
+              key: { type: "string", description: "Unique identifier of the memory to diff" },
+              targetVersion: { type: "number", description: "Version number to compare against (defaults to previous version)" },
+            },
+            required: ["key"],
+          },
+        },
+        {
           name: "munin_get_project_info",
           description: "Get current project metadata including E2EE status, tier features, and limits. CRITICAL: Before storing or retrieving memories in an E2EE project, verify the encryption key is set correctly. Shows whether MUNIN_ENCRYPTION_KEY is configured. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
           inputSchema: {
@@ -185,6 +198,9 @@ export function createMcpServerInstance(
           break;
         case "munin_share_memory":
           result = await client.invoke(projectId, "share", enrichedPayload);
+          break;
+        case "munin_diff_memory":
+          result = await client.invoke(projectId, "diff", enrichedPayload);
           break;
         case "munin_get_project_info": {
           const caps = await client.capabilities();
