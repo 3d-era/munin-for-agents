@@ -23,22 +23,45 @@ async function main() {
     if (args[0] === "env") {
       const [, subcmd, key, ...rest] = args;
 
+      const SUPPORTED_ENV_KEYS = ["MUNIN_API_KEY", "MUNIN_PROJECT", "MUNIN_ENCRYPTION_KEY"] as const;
+      type SupportedEnvKey = (typeof SUPPORTED_ENV_KEYS)[number];
+      const isSupportedKey = (k: string): k is SupportedEnvKey =>
+        (SUPPORTED_ENV_KEYS as readonly string[]).includes(k);
+
       if (subcmd === "set") {
         if (!key) throw new Error("Usage: munin-claude env set <key> <value>");
+        if (!isSupportedKey(key)) {
+          throw new Error(`Unsupported key '${key}'. Supported: ${SUPPORTED_ENV_KEYS.join(", ")}`);
+        }
         const value = rest.join(" ");
         if (!value) throw new Error("Usage: munin-claude env set <key> <value>");
-        writeEnvFile(".env", [{ key, value }]);
-        console.log(JSON.stringify({ ok: true, message: `Set ${key} in .env` }));
+        // Write to .env.local (gitignored by default) — never .env, which may be committed.
+        writeEnvFile(".env.local", [{ key, value }]);
+        console.log(JSON.stringify({ ok: true, message: `Set ${key} in .env.local` }));
         return;
       }
 
       if (subcmd === "get") {
         if (!key) throw new Error("Usage: munin-claude env get <key>");
-        // Only support MUNIN_PROJECT for now
-        if (key !== "MUNIN_PROJECT") throw new Error("Only MUNIN_PROJECT is supported");
-        const { resolveProjectId } = await import("@kalera/munin-runtime");
-        const projectId = resolveProjectId();
-        console.log(JSON.stringify({ ok: true, key, value: projectId ?? null }));
+        if (!isSupportedKey(key)) {
+          throw new Error(`Unsupported key '${key}'. Supported: ${SUPPORTED_ENV_KEYS.join(", ")}`);
+        }
+        if (key === "MUNIN_PROJECT") {
+          const { resolveProjectId } = await import("@kalera/munin-runtime");
+          const projectId = resolveProjectId();
+          console.log(JSON.stringify({ ok: true, key, value: projectId ?? null }));
+          return;
+        }
+        // For MUNIN_API_KEY / MUNIN_ENCRYPTION_KEY — read via the runtime CLI env loader
+        // so resolution order matches actual MCP server behavior:
+        // shell env → .env.local (walked up) → .env (walked up).
+        const { loadCliEnv } = await import("@kalera/munin-runtime");
+        const env = loadCliEnv();
+        const value =
+          key === "MUNIN_API_KEY"
+            ? env.apiKey ?? null
+            : process.env.MUNIN_ENCRYPTION_KEY ?? null;
+        console.log(JSON.stringify({ ok: true, key, value }));
         return;
       }
 

@@ -26,7 +26,7 @@ export function createMcpServerInstance(
   const server = new Server(
     {
       name: "munin-mcp-server",
-      version: "1.3.0",
+      version: "1.4.0",
     },
     {
       capabilities: {
@@ -40,21 +40,51 @@ export function createMcpServerInstance(
       tools: [
         {
           name: "munin_store_memory",
-          description: "Store or update a memory in Munin Context Core. It will automatically use the active project from environment if projectId is omitted. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
+          description: "Store or update one or more memories in Munin Context Core. Auto-uses active project if projectId omitted. BATCH MODE: pass `memories: [...]` (up to 50 items per call) to save many memories in a single call — drastically reduces API quota usage at session end / /compact. When `memories` is provided, single-memory params (key/content/...) are ignored. TIPS for better recall later: (1) Set `validFrom`/`validTo` for time-bound facts so search auto-filters stale memories; (2) Pin durable identity facts via `isPinned: true`. IMPORTANT: Call as MCP tool, not shell command.",
           inputSchema: {
             type: "object",
             properties: {
               projectId: { type: "string", description: "Optional. Only use if cross-saving to a different Context Core ID." },
-              key: { type: "string", description: "Unique identifier for this memory" },
-              content: { type: "string", description: "The content to remember" },
+              key: { type: "string", description: "Unique identifier for this memory (single-memory mode)" },
+              content: { type: "string", description: "The content to remember (single-memory mode)" },
               title: { type: "string", description: "Optional title" },
-              tags: { 
-                type: "array", 
-                items: { type: "string" }, 
+              tags: {
+                type: "array",
+                items: { type: "string" },
                 description: "List of tags, e.g. ['planning', 'frontend']"
+              },
+              validFrom: {
+                type: "string",
+                description: "Optional ISO-8601 date — memory is hidden from search before this date. Use for facts that take effect later (e.g., new policy). Omit for always-valid memories."
+              },
+              validTo: {
+                type: "string",
+                description: "Optional ISO-8601 date — memory expires from search after this date. Use for time-bound facts (deadlines, sprint goals, expiring promotions). Omit for never-expiring."
+              },
+              isPinned: {
+                type: "boolean",
+                description: "Mark as pinned to boost in search ranking. Reserve for high-importance identity/anchor facts (project name, user role, key constraints)."
+              },
+              memories: {
+                type: "array",
+                description: "OPTIONAL. For batch storing up to 50 memories in one call (saves API quota at /compact / session end). Each item has same shape as single-memory params (key, content, tags, title, validFrom, validTo, isPinned). When provided, single-memory params (key/content/...) are ignored. Returns per-item success/error in `data.results`.",
+                maxItems: 50,
+                items: {
+                  type: "object",
+                  properties: {
+                    key: { type: "string" },
+                    content: { type: "string" },
+                    title: { type: "string" },
+                    tags: { type: "array", items: { type: "string" } },
+                    validFrom: { type: "string" },
+                    validTo: { type: "string" },
+                    isPinned: { type: "boolean" }
+                  },
+                  required: ["key", "content"]
+                }
               }
             },
-            required: ["key", "content"],
+            required: [],
           },
         },
         {
@@ -71,13 +101,22 @@ export function createMcpServerInstance(
         },
         {
           name: "munin_search_memories",
-          description: "Search for memories using semantic search or keywords. Returns formatted, token-efficient GraphRAG context. Supports pagination with topK/offset and optional total count. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
+          description: "Hybrid 6-signal search (keyword + semantic + named-entity + quoted-phrase + recency + pinned). QUERY TIPS to lift recall: (1) Wrap exact strings in double quotes — e.g., `\"Project Munin v1.3\"` — to trigger quoted-phrase boost (+0.25); (2) Include capitalized names (people, products, places) for name-entity boost (+0.15); (3) Use `filters.since`/`before` for temporal scoping (relative strings supported: 'yesterday', 'last week', '7 days ago'). Returns token-efficient GraphRAG context with mermaid graph. IMPORTANT: Call as MCP tool.",
           inputSchema: {
             type: "object",
             properties: {
               projectId: { type: "string", description: "Optional. The Munin Context Core ID." },
-              query: { type: "string", description: "Search query" },
-              tags: { type: "array", items: { type: "string" } },
+              query: { type: "string", description: "Search query. Tip: wrap exact phrases in quotes for boost; capitalize entity names." },
+              tags: { type: "array", items: { type: "string" }, description: "Filter results to memories containing these tags" },
+              tagMode: { type: "string", enum: ["or", "and"], description: "Tag combination: 'or' (any match) or 'and' (all match). Default: 'or'." },
+              filters: {
+                type: "object",
+                description: "Temporal filter on memory createdAt. Supports ISO-8601 dates AND relative strings: 'yesterday', 'last week', 'last month', 'last year', '7 days ago', '3 weeks ago', etc.",
+                properties: {
+                  since: { type: "string", description: "Memories created on/after this date (e.g., 'last week', '2026-04-01')" },
+                  before: { type: "string", description: "Memories created on/before this date" }
+                }
+              },
               topK: { type: "number", description: "Max results to return (default: 10, max: 50)" },
               offset: { type: "number", description: "Pagination offset for fetching more results (default: 0)" },
               includeTotal: { type: "boolean", description: "If true, includes total count in response (default: false)" },
@@ -112,7 +151,7 @@ export function createMcpServerInstance(
         },
         {
           name: "munin_share_memory",
-          description: "Share one or more memories to other projects owned by the same user. The target project must share the same Hash Key to read encrypted content. Requires Pro or Elite tier. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
+          description: "Share one or more memories to other projects owned by the same user. The target project must share the same Hash Key to read encrypted content. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
           inputSchema: {
             type: "object",
             properties: {
@@ -183,6 +222,18 @@ export function createMcpServerInstance(
             required: ["key", "v1", "v2"],
           },
         },
+        {
+          name: "munin_acknowledge_setup",
+          description: "Acknowledge that you have read the latest Munin setup guide. Call this AFTER reading the setup guide URL provided in any ERR_STALE_PROTOCOL response. Subsequent write actions (store, share) will then proceed without setup-version errors. Pass the version exactly as shown in the remediation hint.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              projectId: { type: "string", description: "Optional. Defaults to active project." },
+              version: { type: "string", description: "Setup version in ISO date format (YYYY-MM-DD), exactly as shown in the ERR_STALE_PROTOCOL remediation hint." }
+            },
+            required: ["version"]
+          }
+        },
       ],
     };
   });
@@ -247,6 +298,9 @@ export function createMcpServerInstance(
           break;
         case "munin_diff_memory":
           result = await client.invoke(projectId, "diff", { key: args.key, v1: args.v1, v2: args.v2 });
+          break;
+        case "munin_acknowledge_setup":
+          result = await client.invoke(projectId, "acknowledge_setup", { version: args.version });
           break;
         default:
           throw new Error(`Unknown tool: ${request.params.name}`);
