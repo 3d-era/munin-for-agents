@@ -9,8 +9,7 @@ export type MuninAction =
   | "rollback"
   | "encrypt"
   | "decrypt"
-  | "diff"
-  | "acknowledge_setup";
+  | "diff";
 
 export interface MuninActionEnvelope<TPayload = Record<string, unknown>> {
   action: MuninAction;
