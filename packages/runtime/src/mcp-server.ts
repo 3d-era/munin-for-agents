@@ -26,7 +26,7 @@ export function createMcpServerInstance(
   const server = new Server(
     {
       name: "munin-mcp-server",
-      version: "1.2.9",
+      version: "1.3.0",
     },
     {
       capabilities: {
@@ -132,19 +132,6 @@ export function createMcpServerInstance(
           },
         },
         {
-          name: "munin_diff_memory",
-          description: "Compare two versions of a memory. Returns the differences between the current version and a specified target version. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
-          inputSchema: {
-            type: "object",
-            properties: {
-              projectId: { type: "string", description: "Optional. Defaults to active project." },
-              key: { type: "string", description: "Unique identifier of the memory to diff" },
-              targetVersion: { type: "number", description: "Version number to compare against (defaults to previous version)" },
-            },
-            required: ["key"],
-          },
-        },
-        {
           name: "munin_get_project_info",
           description: "Get current project metadata including E2EE status, tier features, and limits. CRITICAL: Before storing or retrieving memories in an E2EE project, verify the encryption key is set correctly. Shows whether MUNIN_ENCRYPTION_KEY is configured. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
           inputSchema: {
@@ -153,6 +140,47 @@ export function createMcpServerInstance(
               projectId: { type: "string", description: "Optional. Defaults to active project." },
             },
             required: [],
+          },
+        },
+        {
+          name: "munin_versions",
+          description: "List all versions of a memory (version history). Use this to review past changes before rolling back. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              projectId: { type: "string", description: "Optional. Defaults to active project." },
+              key: { type: "string", description: "Memory key (provide this OR id, not both)" },
+              id: { type: "string", description: "Memory ID (provide this OR key, not both)" },
+            },
+            required: ["key"],
+          },
+        },
+        {
+          name: "munin_rollback",
+          description: "Rollback a memory to a previous version. Run munin_versions first to find the version number. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              projectId: { type: "string", description: "Optional. Defaults to active project." },
+              key: { type: "string", description: "Memory key (provide this OR id, not both)" },
+              id: { type: "string", description: "Memory ID (provide this OR key, not both)" },
+              version: { type: "number", description: "The version number to rollback to (required)" },
+            },
+            required: ["key", "version"],
+          },
+        },
+        {
+          name: "munin_diff_memory",
+          description: "Compare two specific versions of the same memory. Returns a diff showing what changed between v1 and v2. IMPORTANT: Call this as an MCP tool, NOT as a shell command.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              projectId: { type: "string", description: "Optional. Defaults to active project." },
+              key: { type: "string", description: "Memory key" },
+              v1: { type: "number", description: "First version number" },
+              v2: { type: "number", description: "Second version number" },
+            },
+            required: ["key", "v1", "v2"],
           },
         },
       ],
@@ -211,6 +239,15 @@ export function createMcpServerInstance(
           };
           break;
         }
+        case "munin_versions":
+          result = await client.invoke(projectId, "versions", { key: args.key, id: args.id });
+          break;
+        case "munin_rollback":
+          result = await client.invoke(projectId, "rollback", { key: args.key, id: args.id, version: args.version });
+          break;
+        case "munin_diff_memory":
+          result = await client.invoke(projectId, "diff", { key: args.key, v1: args.v1, v2: args.v2 });
+          break;
         default:
           throw new Error(`Unknown tool: ${request.params.name}`);
       }

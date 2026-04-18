@@ -79,11 +79,13 @@ The plugin runs as an MCP server via `npx @kalera/munin-claude`. The `.mcp.json`
 **Smoke test:**
 
 ```bash
-MUNIN_API_KEY="<key>" MUNIN_PROJECT="<project>" \
-npx --yes @kalera/munin-claude call munin_get_project_info '{}'
+curl -X POST "https://munin.kalera.dev/api/mcp" \
+  -H "Authorization: Bearer $MUNIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"projectId":"$MUNIN_PROJECT","action":"recent","payload":{"limit":3}}'
 ```
 
-Expected: `{ "ok": true, ... }`
+Expected: `{ "ok": true, "data": [...] }` (empty [] = normal for new projects)
 
 ---
 
@@ -107,3 +109,5 @@ munin-claude-code/
 ```
 
 For detailed setup instructions, E2EE guidance, and cross-platform setup, see **[docs/ai-setup-guide.md](https://github.com/3d-era/munin-for-agents/blob/main/docs/ai-setup-guide.md)**.
+
+ABC

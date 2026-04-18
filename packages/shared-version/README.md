@@ -7,7 +7,7 @@ Single source of truth for version strings across the Munin ecosystem. All packa
 ```typescript
 import { VERSION, SERVER_VERSION } from "@kalera/munin-shared-version";
 
-console.log(VERSION);        // e.g. "1.2.9"
+console.log(VERSION);        // e.g. "1.3.0"
 console.log(SERVER_VERSION); // same as VERSION
 ```
 

@@ -102,7 +102,7 @@ Add to `.cursor/mcp.json`:
 
 ## MCP Tools
 
-`munin_search_memories` · `munin_retrieve_memory` · `munin_list_memories` · `munin_recent_memories` · `munin_store_memory` · `munin_share_memory` · `munin_get_project_info` · `munin_diff_memory`
+`munin_search_memories` · `munin_retrieve_memory` · `munin_list_memories` · `munin_recent_memories` · `munin_store_memory` · `munin_share_memory` · `munin_versions` · `munin_rollback` · `munin_diff_memory` · `munin_get_project_info`
 
 Always call as MCP tools — never as shell commands.
 

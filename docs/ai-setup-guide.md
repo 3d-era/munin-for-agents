@@ -106,19 +106,16 @@ node -e "console.log('API_KEY:', !!process.env.MUNIN_API_KEY, '| PROJECT:', proc
 **Do this first.** It confirms your credentials work before you touch any plugin or config.
 
 ```bash
-MUNIN_API_KEY="<user-provided-key>" \
-MUNIN_PROJECT="<user-provided-project>" \
-npx --yes @kalera/munin-claude call munin_get_project_info '{}'
+curl -X POST "https://munin.kalera.dev/api/mcp" \
+  -H "Authorization: Bearer <user-provided-key>" \
+  -H "Content-Type: application/json" \
+  -d '{"projectId":"<user-provided-project>","action":"recent","payload":{}}'
 ```
 
 **Expected output:**
 
 ```json
-{
-  "ok": true,
-  "encryptionKeyConfigured": false,
-  ...
-}
+{ "ok": true, "encryptionEnabled": false, ... }
 ```
 
 **Error meanings:**
@@ -127,7 +124,7 @@ npx --yes @kalera/munin-claude call munin_get_project_info '{}'
 |---|---|---|
 | `{ "ok": true, ... }` | ✅ Credentials work | Proceed to platform setup |
 | `401 Unauthorized` | ❌ Wrong API key | Ask user to re-copy from dashboard |
-| `{ "error": "projectId is required" }` | ❌ No project ID | Set `MUNIN_PROJECT` in .env.local |
+| `{ "ok": false, "error": "projectId is required" }` | ❌ No project ID | Set `MUNIN_PROJECT` in .env.local |
 | `EAI_AGAIN` / network error | ❌ Cannot reach server | Check `MUNIN_BASE_URL` is correct |
 
 **Do not proceed with plugin installation until the smoke test passes.**
@@ -186,8 +183,10 @@ Review the content and merge the **Memory Index Protocol** section into your pro
 #### Step 4 — Final smoke test
 
 ```bash
-MUNIN_API_KEY="<key>" MUNIN_PROJECT="<project>" \
-npx --yes @kalera/munin-claude call munin_list_memories '{"limit": 5}'
+curl -X POST "https://munin.kalera.dev/api/mcp" \
+  -H "Authorization: Bearer <key>" \
+  -H "Content-Type: application/json" \
+  -d '{"projectId":"<project>","action":"list","payload":{"limit":5}}'
 ```
 
 Expected: `{ "ok": true, "data": [...] }` or `{ "ok": true, "data": [] }`
@@ -252,7 +251,7 @@ The extension is configured via `gemini-extension.json`. If not already present,
 ```json
 {
   "name": "munin-memory",
-  "version": "1.2.9",
+  "version": "1.3.0",
   "args": ["-y", "@kalera/munin-gemini@latest", "mcp", "gemini-cli-extension"]
 }
 ```
@@ -283,8 +282,8 @@ Merge the **Memory Index Protocol** into the agent's `GEMINI.md` if present.
 #### Step 4 — Smoke test
 
 ```bash
-MUNIN_API_KEY="<key>" MUNIN_PROJECT="<project>" \
-npx --yes @kalera/munin-gemini call munin_get_project_info '{}'
+curl -X POST "https://munin.kalera.dev/api/mcp" \
+  -H "Content-Type: application/json" \
 ```
 
 ---
@@ -404,8 +403,10 @@ tags: ["dependencies"]
 | `munin_recent_memories` | Get latest N memories |
 | `munin_store_memory` | End of task, bug fix, decision |
 | `munin_share_memory` | Share memories to another project (Pro/Elite) |
-| `munin_get_project_info` | Check E2EE status and tier |
+| `munin_versions` | View version history of a memory |
+| `munin_rollback` | Rollback memory to a previous version |
 | `munin_diff_memory` | Compare two versions of a memory |
+| `munin_get_project_info` | Check E2EE status and tier |
 
 **Important:** Always call these as MCP tools — never as shell commands.
 
@@ -436,8 +437,10 @@ Munin supports **Zero-Knowledge Encryption**. When E2EE is enabled on a project,
 ### Check if E2EE is enabled
 
 ```bash
-MUNIN_API_KEY="<key>" MUNIN_PROJECT="<project>" \
-npx --yes @kalera/munin-claude call munin_get_project_info '{}'
+curl -X POST "https://munin.kalera.dev/api/mcp" \
+  -H "Authorization: Bearer <key>" \
+  -H "Content-Type: application/json" \
+  -d '{"projectId":"<project>","action":"recent","payload":{}}'
 ```
 
 Look for `encryptionEnabled: true` or `aiPoweredE2EE: true` in the response.
@@ -555,8 +558,10 @@ munin-claude env set MUNIN_PROJECT <project>
 claude plugin marketplace add 3d-era/munin-for-agents
 claude plugin install munin-claude-code@munin-ecosystem
 # Smoke test:
-MUNIN_API_KEY="<key>" MUNIN_PROJECT="<project>" \
-npx --yes @kalera/munin-claude call munin_get_project_info '{}'
+curl -X POST "https://munin.kalera.dev/api/mcp" \
+  -H "Authorization: Bearer <key>" \
+  -H "Content-Type: application/json" \
+  -d '{"projectId":"<project>","action":"recent","payload":{}}'
 ```
 
 ### OpenClaw
@@ -574,8 +579,9 @@ openclaw exec munin-openclaw munin_list_memories
 export MUNIN_API_KEY="<key>"
 export MUNIN_PROJECT="<project>"
 # Smoke test:
-MUNIN_API_KEY="<key>" MUNIN_PROJECT="<project>" \
-npx --yes @kalera/munin-gemini call munin_get_project_info '{}'
+curl -X POST "https://munin.kalera.dev/api/mcp" \
+  -H "Content-Type: application/json" \
+  -d '{"projectId":"<project>","action":"recent","payload":{}}'
 ```
 
 ### Cursor / MCP
