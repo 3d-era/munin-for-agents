@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@kalera/munin-sdk': link:packages/ts-sdk
-
 importers:
 
   .:
@@ -40,9 +37,12 @@ importers:
         specifier: workspace:*
         version: link:../../packages/runtime
       '@kalera/munin-sdk':
-        specifier: link:../../packages/ts-sdk
+        specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
+      '@types/node':
+        specifier: ^24.3.0
+        version: 24.12.0
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
@@ -53,9 +53,12 @@ importers:
         specifier: workspace:*
         version: link:../../packages/runtime
       '@kalera/munin-sdk':
-        specifier: link:../../packages/ts-sdk
+        specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
+      '@types/node':
+        specifier: ^24.3.0
+        version: 24.12.0
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
@@ -66,9 +69,12 @@ importers:
         specifier: workspace:*
         version: link:../../packages/runtime
       '@kalera/munin-sdk':
-        specifier: link:../../packages/ts-sdk
+        specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
+      '@types/node':
+        specifier: ^24.3.0
+        version: 24.12.0
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
@@ -79,9 +85,12 @@ importers:
         specifier: workspace:*
         version: link:../../packages/runtime
       '@kalera/munin-sdk':
-        specifier: link:../../packages/ts-sdk
+        specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
+      '@types/node':
+        specifier: ^24.3.0
+        version: 24.12.0
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
@@ -89,7 +98,7 @@ importers:
   adapters/kilo:
     dependencies:
       '@kalera/munin-sdk':
-        specifier: link:../../packages/ts-sdk
+        specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
       typescript:
@@ -102,9 +111,12 @@ importers:
         specifier: workspace:*
         version: link:../../packages/runtime
       '@kalera/munin-sdk':
-        specifier: link:../../packages/ts-sdk
+        specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
+      '@types/node':
+        specifier: ^24.3.0
+        version: 24.12.0
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
@@ -115,7 +127,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/runtime
       '@kalera/munin-sdk':
-        specifier: link:../../packages/ts-sdk
+        specifier: workspace:*
         version: link:../../packages/ts-sdk
       '@sinclair/typebox':
         specifier: ^0.34.49
@@ -124,6 +136,9 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
+      '@types/node':
+        specifier: ^24.3.0
+        version: 24.12.0
       openclaw:
         specifier: ^2026.3.28
         version: 2026.3.28(@napi-rs/canvas@0.1.97)
@@ -134,21 +149,32 @@ importers:
   adapters/qwen:
     dependencies:
       '@kalera/munin-sdk':
-        specifier: link:../../packages/ts-sdk
+        specifier: workspace:*
         version: link:../../packages/ts-sdk
     devDependencies:
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
 
+  adapters/shared: {}
+
   packages/runtime:
     dependencies:
       '@kalera/munin-sdk':
-        specifier: link:../ts-sdk
+        specifier: workspace:*
         version: link:../ts-sdk
       '@modelcontextprotocol/sdk':
         specifier: ^1.27.1
         version: 1.27.1(zod@4.3.6)
+    devDependencies:
+      '@types/node':
+        specifier: ^24.3.0
+        version: 24.12.0
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
+  packages/shared-version:
     devDependencies:
       typescript:
         specifier: ^5.9.2
