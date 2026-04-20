@@ -35,31 +35,51 @@ munin-mcp-server --version   # should print a version string, then exit
 
 ---
 
-## Step 2 — Register the MCP server
+## Step 2 — Register the MCP server (global, API key only)
 
-Run from any directory:
+Run from any directory — this registers the server once for all projects:
 
 ```bash
 codex mcp add munin-memory \
   --env "MUNIN_API_KEY=<user-provided-key>" \
-  --env "MUNIN_PROJECT=<user-provided-project>" \
   -- munin-mcp-server
 ```
 
-This writes to `~/.codex/config.toml`. Verify:
+**Do not set `MUNIN_PROJECT` here.** Leave it out of the global config — project ID is resolved per-project via `.env.local` (Step 3). Only `MUNIN_API_KEY` belongs in the global config because it is a user credential shared across all projects.
+
+Verify:
 
 ```bash
 codex mcp list
 # expect: munin-memory  munin-mcp-server  ...  enabled
 ```
 
-For E2EE projects, also pass `--env "MUNIN_ENCRYPTION_KEY=<user-provided-hash-key>"`.
-
-> **Credentials are stored in `~/.codex/config.toml` (user-global).** Unlike Claude Code or Cursor, Codex has no per-project MCP config — all MCP servers are registered globally and the `MUNIN_PROJECT` env var scopes them to the correct project.
+For E2EE projects, also pass `--env "MUNIN_ENCRYPTION_KEY=<user-provided-hash-key>"` (this is also user-scoped and belongs in global config).
 
 ---
 
-## Step 3 — Allow MCP tool calls
+## Step 3 — Per-project `.env.local`
+
+The MCP server inherits Codex's working directory and walks up the directory tree to find `MUNIN_PROJECT`. Create `.env.local` in each project root:
+
+```bash
+# .env.local  (one file per project root)
+MUNIN_PROJECT=proj_your_project_id
+```
+
+Add it to `.gitignore` if not already covered:
+
+```bash
+git check-ignore -v .env.local || echo '.env.local' >> .gitignore
+```
+
+This is the only per-project change needed. Switch projects by `cd`-ing to a different directory — Codex picks up whichever `.env.local` is nearest the working directory.
+
+> **Why this works:** `munin-runtime` calls `process.cwd()` at startup and walks up ancestor directories looking for `.env.local`, then `.env`. Codex spawns the MCP server with the session working directory as CWD, so each project naturally resolves its own `MUNIN_PROJECT`.
+
+---
+
+## Step 4 — Allow MCP tool calls
 
 By default, Codex requires user approval before each MCP tool call. In non-interactive (`exec`) mode this auto-cancels every call. Disable the elicitation gate globally:
 
@@ -76,7 +96,7 @@ In **interactive mode** (running `codex` without `exec`), Codex presents an appr
 
 ---
 
-## Step 4 — Verify
+## Step 5 — Verify
 
 ### Smoke test (direct HTTP — no Codex session needed)
 
@@ -125,7 +145,7 @@ Expected: `{"ok":true,"data":[...]}` (empty array is fine for new projects).
 
 ---
 
-## Step 5 — Update AGENTS.md
+## Step 6 — Update AGENTS.md
 
 Codex reads agent instructions from `AGENTS.md` in the project root. Add the Memory Protocol pointer:
 
@@ -149,7 +169,8 @@ If `AGENTS.md` does not exist, create it with just this section.
 | `MCP startup failed: connection closed: initialize response` | Using `npx` instead of global binary | Remove the server (`codex mcp remove munin-memory`) and re-add using `-- munin-mcp-server` (global binary, no npx) |
 | `user cancelled MCP tool call` in exec mode | `tool_call_mcp_elicitation` is enabled | Add `[features] tool_call_mcp_elicitation = false` to `~/.codex/config.toml` |
 | `MUNIN_API_KEY is required` | Env not passed to MCP server | Re-add with `--env "MUNIN_API_KEY=<key>"` |
-| `projectId is required` / empty results | `MUNIN_PROJECT` not set | Re-add with `--env "MUNIN_PROJECT=<proj_xxx>"` |
+| `projectId is required` / empty results | No `.env.local` in project root or ancestors | Create `.env.local` with `MUNIN_PROJECT=proj_xxx` in the project root |
+| Returns memories from wrong project | `codex` launched from wrong directory | `cd` to the project root before running `codex`; the MCP server walks up from CWD |
 | `401 Unauthorized` | Wrong API key | Re-copy from [munin.kalera.app/dashboard](https://munin.kalera.app/dashboard) |
 | Garbled content | E2EE project, wrong key | Re-add with `--env "MUNIN_ENCRYPTION_KEY=<hash-key>"` |
 | `EAI_AGAIN` / network error | DNS/proxy issue | Confirm `MUNIN_BASE_URL` is unset or `https://munin.kalera.dev` |
