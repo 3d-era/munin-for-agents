@@ -64,13 +64,20 @@ Sign up at [munin.kalera.app](https://munin.kalera.app) — FREE FOREVER.
 
 After signing up, create a new project and copy your **Project ID** (`proj_xxxxxxxxxxxx`).
 
-### 2. Add Your Project ID
+### 2. Add Credentials
 
-Create or edit `.env` in your project root:
+Create `.env.local` in your project root (preferred — gitignored by default):
 
 ```bash
+MUNIN_API_KEY=ck_your_api_key
 MUNIN_PROJECT=proj_your_project_id
 ```
+
+Both values come from your [Munin dashboard](https://munin.kalera.app/dashboard).
+
+> **Use `.env.local`, not `.env`.** `.env` is typically committed to git and can leak your API key. The plugin reads both files, with `.env.local` taking priority, but credentials should always go in `.env.local`.
+>
+> If you use `munin-claude` CLI: `munin-claude env set MUNIN_API_KEY <key>` and `munin-claude env set MUNIN_PROJECT <project>` write to `.env.local` automatically.
 
 ### 3. Install via Plugin Marketplace
 

@@ -6,15 +6,22 @@ set -euo pipefail
 
 CLAUDE_PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
 MUNIN_PROJECT=""
+MUNIN_API_KEY="${MUNIN_API_KEY:-}"
 
 # --- Detect projectId ---
 # 1. Per-project .env.local (highest priority)
 if [[ -f "$CLAUDE_PROJECT_DIR/.env.local" ]]; then
   MUNIN_PROJECT=$(grep -E "^MUNIN_PROJECT=" "$CLAUDE_PROJECT_DIR/.env.local" 2>/dev/null | cut -d= -f2 | tr -d '"' | tr -d "'" | xargs)
+  if [[ -z "$MUNIN_API_KEY" ]]; then
+    MUNIN_API_KEY=$(grep -E "^MUNIN_API_KEY=" "$CLAUDE_PROJECT_DIR/.env.local" 2>/dev/null | cut -d= -f2 | tr -d '"' | tr -d "'" | xargs)
+  fi
 fi
 # 2. Per-project .env
 if [[ -z "$MUNIN_PROJECT" && -f "$CLAUDE_PROJECT_DIR/.env" ]]; then
   MUNIN_PROJECT=$(grep -E "^MUNIN_PROJECT=" "$CLAUDE_PROJECT_DIR/.env" 2>/dev/null | cut -d= -f2 | tr -d '"' | tr -d "'" | xargs)
+fi
+if [[ -z "$MUNIN_API_KEY" && -f "$CLAUDE_PROJECT_DIR/.env" ]]; then
+  MUNIN_API_KEY=$(grep -E "^MUNIN_API_KEY=" "$CLAUDE_PROJECT_DIR/.env" 2>/dev/null | cut -d= -f2 | tr -d '"' | tr -d "'" | xargs)
 fi
 # 3. Global settings.json (deprecated — emit warning but use for session)
 if [[ -z "$MUNIN_PROJECT" && -f "$HOME/.claude/settings.json" ]]; then
@@ -43,7 +50,7 @@ fi
 # --- Search recent memories via npx ---
 PROJECT_KEY=$(basename "$CLAUDE_PROJECT_DIR" | tr '[:upper:]' '[:lower:]')
 
-SEARCH_RESULT=$(MUNIN_PROJECT="$MUNIN_PROJECT" npx --yes @kalera/munin-claude call munin_recent_memories '{"limit":5}' 2>/dev/null || echo '{}')
+SEARCH_RESULT=$(MUNIN_PROJECT="$MUNIN_PROJECT" MUNIN_API_KEY="$MUNIN_API_KEY" npx --yes @kalera/munin-claude call munin_recent_memories '{"limit":5}' 2>/dev/null || echo '{}')
 
 MEMORY_COUNT=$(echo "$SEARCH_RESULT" | grep -o '"key"' | wc -l | xargs || echo 0)
 PROJECT_NAME=$(basename "$CLAUDE_PROJECT_DIR")

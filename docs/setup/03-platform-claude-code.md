@@ -85,14 +85,12 @@ From a Claude Code session, invoke the MCP tool `munin_get_project_info`. Expect
 Append a single pointer line to the project's `CLAUDE.md` (do not inline the protocol — it stays in one canonical place):
 
 ```markdown
-## Memory
+## Memory Protocol (Munin)
 
-Follow the Memory Index Protocol from
-https://raw.githubusercontent.com/3d-era/munin-for-agents/main/munin-ecosystem/docs/setup/01-methodology.md
+Follow the Memory Index Protocol from:
+https://raw.githubusercontent.com/3d-era/munin-for-agents/main/docs/setup/01-methodology.md
 — call `munin_search_memories` at task start, `munin_store_memory` at task end.
 ```
-
-> **NOTE (path verification):** The raw URL above assumes the published `munin-for-agents` repo mirrors this monorepo's `munin-ecosystem/docs/setup/` path. If the publish pipeline rewrites the path (e.g., to `docs/setup/01-methodology.md` at repo root), update the URL accordingly before shipping CLAUDE.md to users.
 
 If `CLAUDE.md` does not exist, create it with just this section. Keep additions minimal — every token here is loaded into context on every Claude Code session.
 
@@ -102,13 +100,15 @@ If `CLAUDE.md` does not exist, create it with just this section. Keep additions 
 
 | Symptom | Fix |
 |---|---|
-| `MUNIN_API_KEY is required` | `munin-claude env set MUNIN_API_KEY <key>` from project root |
+| `MUNIN_API_KEY is required` | `munin-claude env set MUNIN_API_KEY <key>` from project root — writes to `.env.local` |
 | `projectId is required` / silently empty results | `munin-claude env get MUNIN_PROJECT` — must show `proj_...`; re-set if blank |
-| `401 Unauthorized` | Wrong key. Ask user to re-copy from https://munin.kalera.app/dashboard |
+| Session start shows "Loaded 0 memories" even with memories stored | `MUNIN_API_KEY` is missing from `.env.local`/`.env` and not exported in shell. Run `munin-claude env set MUNIN_API_KEY <key>` from the project root |
+| `401 Unauthorized` | Wrong key. Re-copy from https://munin.kalera.app/dashboard |
 | `claude plugin install` says "plugin not found" | Re-run `claude plugin marketplace add 3d-era/munin-for-agents` first |
 | `command not found: munin-claude` | `npm install -g @kalera/munin-claude` |
 | Plugin loads but tools missing in session | Restart Claude Code session (plugin manifest cached at startup) |
 | `EAI_AGAIN` / network timeout | Confirm `MUNIN_BASE_URL` unset or equals `https://munin.kalera.dev` |
 | Smoke test passes but plugin returns garbled content | Project has E2EE — set `MUNIN_ENCRYPTION_KEY` (see methodology doc, §E2EE) |
+| API key in `.env` not picked up by session-start hook | Move credentials to `.env.local` (preferred) or export `MUNIN_API_KEY` in your shell |
 
 Setup complete when Step 3 returns `ok: true` and `claude plugin list` shows `munin-claude-code` enabled.
