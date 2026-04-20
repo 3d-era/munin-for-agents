@@ -1,19 +1,29 @@
 #!/usr/bin/env node
 import { startMcpServer } from "@kalera/munin-runtime";
 import { realpathSync } from "fs";
+import { resolve } from "path";
 import { fileURLToPath } from "url";
 
 async function main() {
   // Check if we are imported as a module or run directly (CJS-safe).
-  // Resolve symlinks on process.argv[1] before comparing — npm bins are symlinks,
-  // and import.meta.url always reflects the real file path, causing a mismatch
-  // that incorrectly sets isImported=true and exits the process immediately.
+  //
+  // Two platform-specific issues require this approach:
+  //   1. Unix/macOS: npm bin entries are symlinks. import.meta.url resolves to
+  //      the real file path while process.argv[1] is the symlink path — they
+  //      never match without realpathSync.
+  //   2. Windows: import.meta.url is a file URL (file:///C:/...) while
+  //      process.argv[1] is a Windows path (C:\...). Naive string concat of
+  //      `file://${process.argv[1]}` produces an invalid URL that never matches.
+  //      fileURLToPath() normalises both sides to the same format. Windows paths
+  //      are also case-insensitive, so the final comparison is lowercased there.
   let isImported = false;
   if (typeof import.meta !== "undefined") {
     try {
-      const realEntry = realpathSync(process.argv[1]);
-      const realModule = fileURLToPath(import.meta.url);
-      isImported = realModule !== realEntry;
+      const realModule = resolve(realpathSync(fileURLToPath(import.meta.url)));
+      const realEntry  = resolve(realpathSync(process.argv[1]));
+      isImported = process.platform === "win32"
+        ? realModule.toLowerCase() !== realEntry.toLowerCase()
+        : realModule !== realEntry;
     } catch {
       isImported = false;
     }
