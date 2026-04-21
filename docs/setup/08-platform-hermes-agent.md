@@ -79,7 +79,7 @@ mcp_servers:
     command: npx
     args:
       - -y
-      - @kalera/munin-mcp-server@latest
+      - '@kalera/munin-mcp-server@latest'
     env:
       MUNIN_API_KEY: ${MUNIN_API_KEY}
       MUNIN_PROJECT: ${MUNIN_PROJECT}
@@ -193,6 +193,7 @@ Or manually create `~/.hermes/skills/munin-memory-protocol/SKILL.md` with the co
 | `MUNIN_API_KEY is required` | Credentials missing from `.env` | Re-run Step 2 — add `MUNIN_API_KEY` to `~/.hermes/.env` |
 | `projectId is required` / empty results | `MUNIN_PROJECT` missing from `.env` | Re-run Step 2 — add `MUNIN_PROJECT` to `~/.hermes/.env` |
 | MCP tools missing from session | MCP server failed to connect at startup | Check Hermes logs; re-verify `config.yaml` syntax (YAML indentation matters); restart agent |
+| `found character '@' that cannot start any token` | YAML cannot parse bare `@kalera/...` in `config.yaml` | Quote the package name: `'@kalera/munin-mcp-server@latest'` |
 | `401 Unauthorized` | Wrong API key | Re-copy from [munin.kalera.app/dashboard](https://munin.kalera.app/dashboard) |
 | Garbled / empty content | E2EE project, wrong or missing encryption key | Add `MUNIN_ENCRYPTION_KEY` to `~/.hermes/.env` |
 | `EAI_AGAIN` / network timeout | DNS/proxy issue | Confirm `MUNIN_BASE_URL` is unset or `https://munin.kalera.dev` |
