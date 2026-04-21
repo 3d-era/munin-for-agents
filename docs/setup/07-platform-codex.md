@@ -17,54 +17,84 @@ End-to-end installation of the Munin memory layer for the OpenAI Codex CLI. Exec
 
 ---
 
-## Step 1 — Install the MCP server globally
+## Step 1 — Register the MCP server
 
-Codex spawns MCP servers as child processes. Install `@kalera/munin-mcp-server` globally so Codex can find it by name without npx:
+Codex can spawn the Munin MCP server either through `npx` or through a globally installed
+`munin-mcp-server` binary.
+
+**Recommended default: `npx`**
+
+This keeps setup small and avoids requiring a separate global install:
+
+**macOS / Linux:**
+```bash
+codex mcp add munin-memory \
+  -- npx -y @kalera/munin-mcp-server@latest
+```
+
+**Windows:** Codex cannot execute `npx` directly — wrap it with `cmd /c`:
+```bash
+codex mcp add munin-memory \
+  -- cmd /c npx -y @kalera/munin-mcp-server@latest
+```
+
+Or edit `~/.codex/config.toml` manually:
+```toml
+[mcp.servers.munin-memory]
+command = "cmd"
+args = ["/c", "npx", "-y", "@kalera/munin-mcp-server@latest"]
+```
+
+This pattern was verified on **April 21, 2026** with:
+
+- Codex CLI `v0.122.0`
+- Node.js `v24.3.0`
+- `codex exec` successfully completing `munin_get_project_info` over an MCP server launched by `npx`
+
+**Alternative: global install**
+
+If you want lower cold-start latency or a more deterministic local binary, install the package
+globally and register the binary directly:
 
 ```bash
 npm install -g @kalera/munin-mcp-server@latest
-```
 
-Verify:
-
-```bash
-munin-mcp-server --version   # should print a version string, then exit
-```
-
-> **Why global install (vs. `npx`) for Codex:** Codex spawns MCP servers via the `command` field in `~/.codex/config.toml`. Using `npx` here causes an ESM/symlink mismatch on Node.js 18+ that prevents the server from starting (the server exits immediately without responding to MCP handshake). A global install avoids this — the binary resolves to the real file path.
-
----
-
-## Step 2 — Register the MCP server (global, API key only)
-
-Run from any directory — this registers the server once for all projects:
-
-```bash
 codex mcp add munin-memory \
-  --env "MUNIN_API_KEY=<user-provided-key>" \
   -- munin-mcp-server
 ```
 
-**Do not set `MUNIN_PROJECT` here.** Leave it out of the global config — project ID is resolved per-project via `.env.local` (Step 3). Only `MUNIN_API_KEY` belongs in the global config because it is a user credential shared across all projects.
-
-Verify:
+Verify either setup with:
 
 ```bash
 codex mcp list
-# expect: munin-memory  munin-mcp-server  ...  enabled
+# expect: munin-memory  ...  enabled
 ```
 
-For E2EE projects, also pass `--env "MUNIN_ENCRYPTION_KEY=<user-provided-hash-key>"` (this is also user-scoped and belongs in global config).
+For E2EE projects, the server still needs `MUNIN_ENCRYPTION_KEY`, but keep it project-local in
+`.env.local` alongside the project ID.
+
+---
+
+## Step 2 — Keep credentials per-project
+
+**Do not set `MUNIN_API_KEY` or `MUNIN_PROJECT` in the global Codex MCP config.** Leave both out
+of the global registration and resolve them from `.env.local` in each project. This makes project
+switching explicit and lets users rotate credentials or point different repos at different Munin
+projects without editing `~/.codex/config.toml`.
 
 ---
 
 ## Step 3 — Per-project `.env.local`
 
-The MCP server inherits Codex's working directory and walks up the directory tree to find `MUNIN_PROJECT`. Create `.env.local` in each project root:
+The MCP server inherits Codex's working directory and walks up the directory tree to find
+`.env.local`. Create `.env.local` in each project root:
 
 ```bash
 # .env.local  (one file per project root)
+MUNIN_API_KEY=ck_your_api_key
 MUNIN_PROJECT=proj_your_project_id
+# E2EE only:
+MUNIN_ENCRYPTION_KEY=your_hash_key
 ```
 
 Add it to `.gitignore` if not already covered:
@@ -73,9 +103,13 @@ Add it to `.gitignore` if not already covered:
 git check-ignore -v .env.local || echo '.env.local' >> .gitignore
 ```
 
-This is the only per-project change needed. Switch projects by `cd`-ing to a different directory — Codex picks up whichever `.env.local` is nearest the working directory.
+This is the only per-project change needed. Switch projects by `cd`-ing to a different directory —
+Codex picks up whichever `.env.local` is nearest the working directory.
 
-> **Why this works:** `munin-runtime` calls `process.cwd()` at startup and walks up ancestor directories looking for `.env.local`, then `.env`. Codex spawns the MCP server with the session working directory as CWD, so each project naturally resolves its own `MUNIN_PROJECT`.
+> **Why this works:** `munin-runtime` calls `process.cwd()` at startup and walks up ancestor
+directories looking for `.env.local`, then `.env`. Codex spawns the MCP server with the session
+working directory as CWD, so each project naturally resolves its own `MUNIN_API_KEY`,
+`MUNIN_PROJECT`, and optional `MUNIN_ENCRYPTION_KEY`.
 
 ---
 
@@ -165,15 +199,17 @@ If `AGENTS.md` does not exist, create it with just this section.
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `munin-mcp-server: command not found` | Not globally installed | `npm install -g @kalera/munin-mcp-server@latest` |
-| `MCP startup failed: connection closed: initialize response` | Using `npx` instead of global binary | Remove the server (`codex mcp remove munin-memory`) and re-add using `-- munin-mcp-server` (global binary, no npx) |
+| `npx: command not found` | Node/npm toolchain not on PATH for Codex | Install Node.js and confirm `npx --version` works in the same shell that launches Codex |
+| Windows: `npx` fails silently or MCP won't start | Bare `npx` not executable on Windows without a shell wrapper | Use `cmd /c npx ...` instead of `npx ...` (see Step 1 Windows note above) |
+| `munin-mcp-server: command not found` | Using the global-binary path without installing it | `npm install -g @kalera/munin-mcp-server@latest`, or switch to the `npx` registration |
 | `user cancelled MCP tool call` in exec mode | `tool_call_mcp_elicitation` is enabled | Add `[features] tool_call_mcp_elicitation = false` to `~/.codex/config.toml` |
-| `MUNIN_API_KEY is required` | Env not passed to MCP server | Re-add with `--env "MUNIN_API_KEY=<key>"` |
-| `projectId is required` / empty results | No `.env.local` in project root or ancestors | Create `.env.local` with `MUNIN_PROJECT=proj_xxx` in the project root |
+| `MUNIN_API_KEY is required` | No project-local credential was found | Create `.env.local` with `MUNIN_API_KEY=ck_xxx` in the project root |
+| `projectId is required` / empty results | No project-local project ID was found | Create `.env.local` with `MUNIN_PROJECT=proj_xxx` in the project root |
 | Returns memories from wrong project | `codex` launched from wrong directory | `cd` to the project root before running `codex`; the MCP server walks up from CWD |
 | `401 Unauthorized` | Wrong API key | Re-copy from [munin.kalera.app/dashboard](https://munin.kalera.app/dashboard) |
 | Garbled content | E2EE project, wrong key | Re-add with `--env "MUNIN_ENCRYPTION_KEY=<hash-key>"` |
 | `EAI_AGAIN` / network error | DNS/proxy issue | Confirm `MUNIN_BASE_URL` is unset or `https://munin.kalera.dev` |
+| First startup feels slow | `npx` is fetching or resolving the package | Warm the cache once with `npx -y @kalera/munin-mcp-server@latest` or use the global-binary path |
 
 ---
 
