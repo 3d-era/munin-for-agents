@@ -4,27 +4,32 @@ import { realpathSync } from "fs";
 import { resolve } from "path";
 import { fileURLToPath } from "url";
 
-async function main() {
-  // Check if we are imported as a module or run directly (CJS-safe).
+async function main(): Promise<void> {
+  // Detect whether this module is being imported vs. run directly.
   //
   // Two platform-specific issues require this approach:
   //   1. Unix/macOS: npm bin entries are symlinks. import.meta.url resolves to
   //      the real file path while process.argv[1] is the symlink path — they
   //      never match without realpathSync.
   //   2. Windows: import.meta.url is a file URL (file:///C:/...) while
-  //      process.argv[1] is a Windows path (C:\...). Naive string concat of
-  //      `file://${process.argv[1]}` produces an invalid URL that never matches.
-  //      fileURLToPath() normalises both sides to the same format. Windows paths
-  //      are also case-insensitive, so the final comparison is lowercased there.
+  //      process.argv[1] is a Windows path (C:\...). fileURLToPath() normalises
+  //      both sides. Windows paths are case-insensitive, so the final compare
+  //      is lowercased there.
   let isImported = false;
-  if (typeof import.meta !== "undefined") {
+  if (typeof import.meta !== "undefined" && process.argv[1]) {
     try {
       const realModule = resolve(realpathSync(fileURLToPath(import.meta.url)));
-      const realEntry  = resolve(realpathSync(process.argv[1]));
+      const realEntry = resolve(realpathSync(process.argv[1]));
       isImported = process.platform === "win32"
         ? realModule.toLowerCase() !== realEntry.toLowerCase()
         : realModule !== realEntry;
-    } catch {
+    } catch (err) {
+      // Fall through to "run directly" — the safe default. Surface the cause
+      // when MUNIN_DEBUG is set so users on exotic environments (bundlers,
+      // missing entry script, permission issues) can diagnose the failure.
+      if (process.env.MUNIN_DEBUG) {
+        console.error("[munin-mcp] isImported detection failed:", err);
+      }
       isImported = false;
     }
   }

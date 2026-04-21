@@ -4,23 +4,33 @@
 
 set -euo pipefail
 
+# Resolve real script directory even when invoked through a symlink.
+_SCRIPT="${BASH_SOURCE[0]}"
+_HOPS=0
+while [[ -L "$_SCRIPT" && $_HOPS -lt 40 ]]; do
+  _DIR="$(cd -P "$(dirname "$_SCRIPT")" && pwd)"
+  _SCRIPT="$(readlink "$_SCRIPT")"
+  [[ "$_SCRIPT" != /* ]] && _SCRIPT="$_DIR/$_SCRIPT"
+  _HOPS=$((_HOPS + 1))
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$_SCRIPT")" && pwd)"
+if [[ ! -f "$SCRIPT_DIR/lib/_env.sh" ]]; then
+  echo '{"hookEventName":"PostToolUse","additionalContext":""}'
+  exit 0
+fi
+# shellcheck source=lib/_env.sh
+. "$SCRIPT_DIR/lib/_env.sh"
+
 CLAUDE_PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
 MUNIN_PROJECT=""
 
-# --- Detect projectId ---
-if [[ -f "$CLAUDE_PROJECT_DIR/.env" ]]; then
-  MUNIN_PROJECT=$(grep -E "^MUNIN_PROJECT=" "$CLAUDE_PROJECT_DIR/.env" 2>/dev/null | cut -d= -f2 | tr -d '"' | tr -d "'" | xargs)
-fi
-if [[ -z "$MUNIN_PROJECT" && -f "$CLAUDE_PROJECT_DIR/.env.local" ]]; then
-  MUNIN_PROJECT=$(grep -E "^MUNIN_PROJECT=" "$CLAUDE_PROJECT_DIR/.env.local" 2>/dev/null | cut -d= -f2 | tr -d '"' | tr -d "'" | xargs)
-fi
+# --- Detect projectId (priority: .env.local > .env) ---
+[[ -z "$MUNIN_PROJECT" ]] && MUNIN_PROJECT=$(read_env_var "$CLAUDE_PROJECT_DIR/.env.local" MUNIN_PROJECT)
+[[ -z "$MUNIN_PROJECT" ]] && MUNIN_PROJECT=$(read_env_var "$CLAUDE_PROJECT_DIR/.env" MUNIN_PROJECT)
 
 if [[ -z "$MUNIN_PROJECT" ]]; then
   echo '{"hookEventName":"PostToolUse","additionalContext":""}'
   exit 0
 fi
 
-# Read stdin for tool result
-INPUT=$(cat 2>/dev/null || echo '{}')
-
-echo "{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"[Munin 🐢] Error detected — saved to error catalog\"}"
+echo '{"hookEventName":"PostToolUse","additionalContext":"[Munin 🐢] Error detected — saved to error catalog"}'
