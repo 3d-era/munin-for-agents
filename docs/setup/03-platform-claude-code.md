@@ -8,7 +8,7 @@ tokens: ~1500
 
 # Claude Code — Munin Setup
 
-End-to-end install for the `munin-claude-code` plugin in a single project. Per-project credentials, no global state.
+End-to-end install of Munin memory for Claude Code. Two options: a simple `npx` MCP registration (recommended) or the full `munin-claude-code` plugin (adds hooks + skills). Per-project credentials, no global state.
 
 ## Prerequisites
 
@@ -17,41 +17,84 @@ End-to-end install for the `munin-claude-code` plugin in a single project. Per-p
 
 ## Step 1 — Set credentials
 
-Run from the project root. Both values come from the user — do not invent them.
+Create `.env.local` in the project root. Both values come from the user — do not invent them.
+
+```bash
+# .env.local  (project root — gitignored by default)
+MUNIN_API_KEY=ck_your_api_key
+MUNIN_PROJECT=proj_your_project_id
+```
+
+Never use `.env` — it may be committed to git and can leak your key.
+
+Add to `.gitignore` if not already covered:
+
+```bash
+git check-ignore -v .env.local || echo '.env.local' >> .gitignore
+```
+
+If you have the `munin-claude` CLI (needed for Option B plugin setup only), you can write to `.env.local` via:
 
 ```bash
 munin-claude env set MUNIN_API_KEY <user-provided-key>
 munin-claude env set MUNIN_PROJECT <user-provided-project>
 ```
 
-These write to `.env.local` in the current directory (gitignored by default — never `.env`, which may be committed).
+Install it with `npm install -g @kalera/munin-claude` if missing.
 
-Verify both are set:
+## Step 2 — Register the MCP server
+
+Claude Code can spawn the Munin MCP server either through the **plugin** (adds hooks + skills) or
+through a direct **`npx`** registration (MCP tools only, simpler setup).
+
+### Option A — `npx` (recommended for most users)
+
+A single command, no plugin marketplace step, same pattern as the Codex CLI setup:
 
 ```bash
-munin-claude env get MUNIN_API_KEY   # non-empty (ck_...)
-munin-claude env get MUNIN_PROJECT   # proj_...
+claude mcp add munin-memory --scope user \
+  -- npx -y @kalera/munin-mcp-server@latest
 ```
 
-If `munin-claude` is missing, install once globally: `npm install -g @kalera/munin-claude`.
+This registers the server once for all projects. Each project switches context by pointing its `.env.local` at a different `MUNIN_PROJECT` — no need to re-register per repo.
 
-## Step 2 — Install plugin
+This pattern was verified on **April 21, 2026** with Claude Code and Node.js v24.
+
+Verify:
+
+```bash
+claude mcp list
+# expect: munin-memory  ...  ✓ Connected
+```
+
+> **Why this works:** `munin-runtime` calls `process.cwd()` at startup and walks up ancestor
+> directories looking for `.env.local`, then `.env`. Claude Code spawns the MCP server with the
+> session working directory as CWD, so each project naturally resolves its own `MUNIN_API_KEY` and
+> `MUNIN_PROJECT`.
+
+> **DO NOT export `MUNIN_API_KEY` in `~/.zshrc` / `~/.bashrc`.** Per-project `.env.local` walk-up
+> is the safe pattern — shell-wide exports leak credentials across projects.
+
+### Option B — Plugin (adds hooks + skills)
+
+Install the full `munin-claude-code` plugin if you want automatic session-start memory search,
+session-end summaries, the `@munin` agent, and the error-catalog hook:
 
 ```bash
 claude plugin marketplace add 3d-era/munin-for-agents
 claude plugin install munin-claude-code@munin-ecosystem
 ```
 
-Verify the plugin is registered:
+Verify:
 
 ```bash
 claude plugin list | grep munin
 # expect: munin-claude-code@munin-ecosystem  (enabled)
 ```
 
-> **DO NOT install the plugin globally or in `~/.claude` outside a project.** The plugin reads `.env.local` from the project root via directory walk-up. A global install with no project context will fail with `projectId is required`.
-
-> **DO NOT export `MUNIN_API_KEY` in `~/.zshrc` / `~/.bashrc` for Claude Code.** Claude Code supports per-project `.env.local` walk-up; shell-wide exports leak credentials across projects and override per-project `.env.local`. Other platforms (e.g., Gemini CLI) may require shell-wide exports — see their platform doc (`05-platform-gemini.md`) for the rationale.
+> **DO NOT install the plugin globally or in `~/.claude` outside a project.** The plugin reads
+> `.env.local` from the project root via directory walk-up. A global install with no project
+> context will fail with `projectId is required`.
 
 ## Step 3 — Verify (smoke test)
 
@@ -78,7 +121,7 @@ Expected response:
 
 ### Step 3b — Canonical post-install verification (MCP tool)
 
-From a Claude Code session, invoke the MCP tool `munin_get_project_info`. Expected: `{ "ok": true, "encryptionKeyConfigured": <boolean>, "data": { ... server capabilities ... } }`. If the tool is missing from the session's tool list, the plugin did not load — restart the Claude Code session (plugin manifest is cached at startup).
+From a Claude Code session, invoke the MCP tool `munin_get_project_info`. Expected: `{ "ok": true, "encryptionKeyConfigured": <boolean>, "data": { ... server capabilities ... } }`. If the tool is missing from the session's tool list, restart the Claude Code session (MCP server and plugin manifests are cached at startup).
 
 ## Step 4 — Update CLAUDE.md
 
@@ -100,15 +143,17 @@ If `CLAUDE.md` does not exist, create it with just this section. Keep additions 
 
 | Symptom | Fix |
 |---|---|
-| `MUNIN_API_KEY is required` | `munin-claude env set MUNIN_API_KEY <key>` from project root — writes to `.env.local` |
-| `projectId is required` / silently empty results | `munin-claude env get MUNIN_PROJECT` — must show `proj_...`; re-set if blank |
-| Session start shows "Loaded 0 memories" even with memories stored | `MUNIN_API_KEY` is missing from `.env.local`/`.env` and not exported in shell. Run `munin-claude env set MUNIN_API_KEY <key>` from the project root |
+| `MUNIN_API_KEY is required` | Check `.env.local` in the project root contains `MUNIN_API_KEY=ck_...`. If using the plugin: `munin-claude env set MUNIN_API_KEY <key>`. |
+| `projectId is required` / silently empty results | `.env.local` must contain `MUNIN_PROJECT=proj_...`. Re-add if blank. |
+| Session start shows "Loaded 0 memories" even with memories stored | `MUNIN_API_KEY` is missing from `.env.local`. Re-add it in the project root. |
 | `401 Unauthorized` | Wrong key. Re-copy from https://munin.kalera.app/dashboard |
+| `npx: command not found` | Node/npm toolchain not on PATH. Install Node.js and confirm `npx --version` works in the same shell that launches Claude Code. |
+| `munin-memory` not in `claude mcp list` | Re-run `claude mcp add munin-memory --scope user -- npx -y @kalera/munin-mcp-server@latest` |
 | `claude plugin install` says "plugin not found" | Re-run `claude plugin marketplace add 3d-era/munin-for-agents` first |
-| `command not found: munin-claude` | `npm install -g @kalera/munin-claude` |
-| Plugin loads but tools missing in session | Restart Claude Code session (plugin manifest cached at startup) |
-| `EAI_AGAIN` / network timeout | Confirm `MUNIN_BASE_URL` unset or equals `https://munin.kalera.dev` |
-| Smoke test passes but plugin returns garbled content | Project has E2EE — set `MUNIN_ENCRYPTION_KEY` (see methodology doc, §E2EE) |
-| API key in `.env` not picked up by session-start hook | Move credentials to `.env.local` (preferred) or export `MUNIN_API_KEY` in your shell |
+| `command not found: munin-claude` | `npm install -g @kalera/munin-claude` (only needed for Option B plugin setup) |
+| MCP tools missing in session after install | Restart Claude Code session (MCP server and plugin manifests are cached at startup) |
+| `EAI_AGAIN` / network timeout | Confirm `MUNIN_BASE_URL` is unset or equals `https://munin.kalera.dev` |
+| Smoke test passes but MCP returns garbled content | Project has E2EE — set `MUNIN_ENCRYPTION_KEY` in `.env.local` (see methodology doc, §E2EE) |
+| Returns memories from wrong project | `claude` launched from wrong directory. `cd` to the project root — the MCP server walks up from CWD. |
 
-Setup complete when Step 3 returns `ok: true` and `claude plugin list` shows `munin-claude-code` enabled.
+Setup complete when Step 3 returns `ok: true` and `claude mcp list` (Option A) or `claude plugin list` (Option B) shows the server connected.

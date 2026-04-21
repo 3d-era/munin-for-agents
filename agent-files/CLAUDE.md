@@ -68,13 +68,19 @@ munin-claude env set MUNIN_API_KEY <key>
 munin-claude env set MUNIN_PROJECT <project>
 ```
 
-Both `MUNIN_API_KEY` and `MUNIN_PROJECT` can be set in `.env.local` at the project root — the runtime walks up the directory tree automatically. See [docs/ai-setup-guide.md](https://github.com/3d-era/munin-for-agents/blob/main/docs/ai-setup-guide.md) for details.
+Keep `MUNIN_API_KEY` and `MUNIN_PROJECT` in `.env.local` at the project root so credentials stay
+project-scoped and can be rotated or changed per repo without editing global agent config. The
+runtime walks up the directory tree automatically. See
+[docs/ai-setup-guide.md](https://github.com/3d-era/munin-for-agents/blob/main/docs/ai-setup-guide.md)
+for details.
 
 ---
 
 ## MCP Server
 
-The plugin runs as an MCP server via `npx @kalera/munin-claude`. The `.mcp.json` reads env vars from your project's `.env.local` file automatically. Make sure `MUNIN_PROJECT` is set in your `.env.local` before using MCP tools.
+The plugin runs as an MCP server via `npx @kalera/munin-claude`. The `.mcp.json` reads env vars
+from your project's `.env.local` file automatically. Make sure `MUNIN_API_KEY` and
+`MUNIN_PROJECT` are set in your `.env.local` before using MCP tools.
 
 **Smoke test:**
 
