@@ -1,20 +1,21 @@
 ---
 setupVersion: "2026-04-17"
 audience: "llm-agent"
-platform: "openclaw-hermes-miniclaw"
+platform: "openclaw-miniclaw"
 loadOrder: 6
 tokens: ~1200
 ---
 
-# Platform Setup — OpenClaw / Hermes / MiniClaw
+# Platform Setup — OpenClaw / MiniClaw
 
 ## Applies to
 
 This guide configures Munin (persistent memory) for the **OpenClaw family of agents**:
 
 - **OpenClaw** — primary OpenClaw runtime
-- **Hermes** — OpenClaw-derived courier agent
 - **MiniClaw** — lightweight OpenClaw variant
+
+> **Hermes Agent** (the open-source courier agent) has its own platform file: `08-platform-hermes-agent.md`. Use that instead if your agent is Hermes.
 
 All three share the same plugin loader and CLI surface (`openclaw config`, `openclaw plugins`, `openclaw exec`). The setup below is identical regardless of which one you are running.
 

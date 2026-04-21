@@ -20,8 +20,9 @@ This file is self-contained. 80% of agents complete setup using only this file p
 | Claude Code                          | `03-platform-claude-code.md`    |
 | Cursor / Kilo / Qwen                 | `04-platform-cursor.md`         |
 | Gemini CLI                           | `05-platform-gemini.md`         |
-| OpenClaw / Hermes / MiniClaw         | `06-platform-openclaw.md`       |
+| OpenClaw / MiniClaw                  | `06-platform-openclaw.md`       |
 | OpenAI Codex CLI                     | `07-platform-codex.md`          |
+| Hermes Agent                         | `08-platform-hermes-agent.md`   |
 | Other / generic MCP client           | `04-platform-cursor.md` (works for any MCP client) |
 
 DO NOT load multiple platform files. DO NOT glob `docs/setup/*.md`. The decision matrix is deterministic — pick the row that matches.
