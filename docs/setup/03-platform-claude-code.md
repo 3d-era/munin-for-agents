@@ -51,9 +51,26 @@ through a direct **`npx`** registration (MCP tools only, simpler setup).
 
 A single command, no plugin marketplace step, same pattern as the Codex CLI setup:
 
+**macOS / Linux:**
 ```bash
 claude mcp add munin-memory --scope user \
   -- npx -y @kalera/munin-mcp-server@latest
+```
+
+**Windows:** Claude Code cannot execute `npx` directly — wrap it with `cmd /c`:
+```bash
+claude mcp add munin-memory --scope user \
+  -- cmd /c npx -y @kalera/munin-mcp-server@latest
+```
+
+Or edit `~/.claude.json` `mcpServers` manually:
+```json
+"munin-memory": {
+  "type": "stdio",
+  "command": "cmd",
+  "args": ["/c", "npx", "-y", "@kalera/munin-mcp-server@latest"],
+  "env": {}
+}
 ```
 
 This registers the server once for all projects. Each project switches context by pointing its `.env.local` at a different `MUNIN_PROJECT` — no need to re-register per repo.
@@ -148,7 +165,8 @@ If `CLAUDE.md` does not exist, create it with just this section. Keep additions 
 | Session start shows "Loaded 0 memories" even with memories stored | `MUNIN_API_KEY` is missing from `.env.local`. Re-add it in the project root. |
 | `401 Unauthorized` | Wrong key. Re-copy from https://munin.kalera.app/dashboard |
 | `npx: command not found` | Node/npm toolchain not on PATH. Install Node.js and confirm `npx --version` works in the same shell that launches Claude Code. |
-| `munin-memory` not in `claude mcp list` | Re-run `claude mcp add munin-memory --scope user -- npx -y @kalera/munin-mcp-server@latest` |
+| `[Warning] Windows requires 'cmd /c' wrapper` (shown in `/doctor`) | Using bare `npx` as `command` on Windows. Change `command` to `cmd` and prepend `/c` to args (see Option A Windows note above). |
+| `munin-memory` not in `claude mcp list` | Re-run `claude mcp add` with the correct platform command (see Option A above) |
 | `claude plugin install` says "plugin not found" | Re-run `claude plugin marketplace add 3d-era/munin-for-agents` first |
 | `command not found: munin-claude` | `npm install -g @kalera/munin-claude` (only needed for Option B plugin setup) |
 | MCP tools missing in session after install | Restart Claude Code session (MCP server and plugin manifests are cached at startup) |

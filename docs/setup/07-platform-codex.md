@@ -26,9 +26,23 @@ Codex can spawn the Munin MCP server either through `npx` or through a globally 
 
 This keeps setup small and avoids requiring a separate global install:
 
+**macOS / Linux:**
 ```bash
 codex mcp add munin-memory \
   -- npx -y @kalera/munin-mcp-server@latest
+```
+
+**Windows:** Codex cannot execute `npx` directly — wrap it with `cmd /c`:
+```bash
+codex mcp add munin-memory \
+  -- cmd /c npx -y @kalera/munin-mcp-server@latest
+```
+
+Or edit `~/.codex/config.toml` manually:
+```toml
+[mcp.servers.munin-memory]
+command = "cmd"
+args = ["/c", "npx", "-y", "@kalera/munin-mcp-server@latest"]
 ```
 
 This pattern was verified on **April 21, 2026** with:
@@ -186,6 +200,7 @@ If `AGENTS.md` does not exist, create it with just this section.
 | Symptom | Cause | Fix |
 |---|---|---|
 | `npx: command not found` | Node/npm toolchain not on PATH for Codex | Install Node.js and confirm `npx --version` works in the same shell that launches Codex |
+| Windows: `npx` fails silently or MCP won't start | Bare `npx` not executable on Windows without a shell wrapper | Use `cmd /c npx ...` instead of `npx ...` (see Step 1 Windows note above) |
 | `munin-mcp-server: command not found` | Using the global-binary path without installing it | `npm install -g @kalera/munin-mcp-server@latest`, or switch to the `npx` registration |
 | `user cancelled MCP tool call` in exec mode | `tool_call_mcp_elicitation` is enabled | Add `[features] tool_call_mcp_elicitation = false` to `~/.codex/config.toml` |
 | `MUNIN_API_KEY is required` | No project-local credential was found | Create `.env.local` with `MUNIN_API_KEY=ck_xxx` in the project root |
