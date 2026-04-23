@@ -140,6 +140,23 @@ Expected response:
 
 From a Claude Code session, invoke the MCP tool `munin_get_project_info`. Expected: `{ "ok": true, "encryptionKeyConfigured": <boolean>, "data": { ... server capabilities ... } }`. If the tool is missing from the session's tool list, restart the Claude Code session (MCP server and plugin manifests are cached at startup).
 
+For this project, validate that the Claude Code session can see the full Munin tool set:
+
+- `munin_search_memories`
+- `munin_store_memory`
+- `munin_retrieve_memory`
+- `munin_recent_memories`
+- `munin_list_memories`
+- `munin_acknowledge_setup`
+- `munin_share_memory`
+- `munin_get_project_info`
+- `munin_versions`
+- `munin_rollback`
+- `munin_diff_memory`
+- `munin_delete_memory`
+
+If your Claude setup includes a tool allowlist or custom MCP policy layer, allow all twelve tools above. `munin_delete_memory` should remain a human-approved action because it is irreversible.
+
 ## Step 4 — Update CLAUDE.md
 
 Append a single pointer line to the project's `CLAUDE.md` (do not inline the protocol — it stays in one canonical place):
@@ -170,6 +187,7 @@ If `CLAUDE.md` does not exist, create it with just this section. Keep additions 
 | `claude plugin install` says "plugin not found" | Re-run `claude plugin marketplace add 3d-era/munin-for-agents` first |
 | `command not found: munin-claude` | `npm install -g @kalera/munin-claude` (only needed for Option B plugin setup) |
 | MCP tools missing in session after install | Restart Claude Code session (MCP server and plugin manifests are cached at startup) |
+| Version-control or delete Munin tools are missing while core tools are present | A local tool allowlist or MCP policy is filtering the server tool set | Expand the allowlist so all twelve Munin tools above are permitted |
 | `EAI_AGAIN` / network timeout | Confirm `MUNIN_BASE_URL` is unset or equals `https://munin.kalera.dev` |
 | Smoke test passes but MCP returns garbled content | Project has E2EE — set `MUNIN_ENCRYPTION_KEY` in `.env.local` (see methodology doc, §E2EE) |
 | Returns memories from wrong project | `claude` launched from wrong directory. `cd` to the project root — the MCP server walks up from CWD. |

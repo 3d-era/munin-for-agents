@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "test": "echo 'adapter-runtime tests: pending'"
+    "test": "tsx test/schema.test.ts"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",

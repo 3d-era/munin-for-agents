@@ -31,6 +31,7 @@ Load this file ONLY when an operation fails. Do not pre-load. Find the error, ap
 |-----------------------------------------|----------------------------------------|--------------------------------------------------------------------|
 | `MUNIN_API_KEY is required`             | No key in env or `.env*` files         | Set `MUNIN_API_KEY` in shell or in `.env.local` at project root    |
 | `projectId is required`                 | No `MUNIN_PROJECT` resolved            | Set `MUNIN_PROJECT` in `.env.local`, or pass `projectId` arg       |
+| `requires exactly one of 'key' or 'id'` | Caller passed neither or both identifiers | Pass one identifier only: `key` or `id`, not both               |
 | `Project not found or access denied`    | Wrong project ID OR API key for different user | Confirm the API key and project ID belong to the same dashboard user |
 | `Unknown tool: <name>`                  | Tool name typo, or stale plugin        | Match name exactly to schema in `00-index.md`; reinstall plugin    |
 | `ERR_STALE_PROTOCOL` / 426              | Setup version drift                    | Re-read setup, call `munin_acknowledge_setup`, retry               |
