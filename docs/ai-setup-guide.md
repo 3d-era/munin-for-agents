@@ -4,9 +4,9 @@
 
 ## Where to look now
 
-**Start here:** [`docs/setup/00-index.md`](./setup/00-index.md) — entry point with platform decision matrix, credentials, MCP tool schemas, and anti-patterns.
+**Start here:** [`docs/setup/00-index.md`](./setup/00-index.md) — entry point with the platform decision matrix, credentials, the current Munin MCP tool schemas, and anti-patterns.
 
-The new structure (8 small files instead of one 758-line monolith):
+Then load only the next file you need:
 
 | File | Purpose |
 |---|---|
@@ -16,10 +16,23 @@ The new structure (8 small files instead of one 758-line monolith):
 | `setup/03-platform-claude-code.md` | Claude Code setup |
 | `setup/04-platform-cursor.md` | Cursor / Kilo / Qwen / generic MCP-native |
 | `setup/05-platform-gemini.md` | Gemini CLI |
-| `setup/06-platform-openclaw.md` | OpenClaw / Hermes / MiniClaw |
+| `setup/06-platform-openclaw.md` | OpenClaw / MiniClaw setup |
+| `setup/07-platform-codex.md` | OpenAI Codex CLI setup |
+| `setup/08-platform-hermes.md` | Hermes Agent setup |
+| `setup/09-platform-opencode.md` | OpenCode setup |
 | `setup/99-changelog.md` | Setup version history |
 
-**Why the split?** Each file is ≤2000 tokens, self-contained, and prompt-optimized for LLM agents. Agents load only what they need (PULL on-demand) instead of consuming the full guide every session.
+## Lookup order for agents
+
+Use this lookup order so later-added files are not missed:
+
+1. Read [`docs/setup/00-index.md`](./setup/00-index.md) first.
+2. Read exactly one platform file that matches the current agent.
+3. Read [`docs/setup/01-methodology.md`](./setup/01-methodology.md) for the Memory Index Protocol.
+4. Read [`docs/setup/02-troubleshooting.md`](./setup/02-troubleshooting.md) only if setup or runtime verification fails.
+5. Read [`docs/setup/99-changelog.md`](./setup/99-changelog.md) only when debugging setup-version drift or recent setup changes.
+
+**Why the split?** Each file is self-contained and prompt-optimized for LLM agents. Agents load only what they need instead of consuming the full guide every session.
 
 ## Archived original
 

@@ -90,7 +90,11 @@ If your OpenCode build does not preserve the tool allowlist automatically, add t
     "munin-memory_munin_list_memories": true,
     "munin-memory_munin_acknowledge_setup": true,
     "munin-memory_munin_share_memory": true,
-    "munin-memory_munin_get_project_info": true
+    "munin-memory_munin_get_project_info": true,
+    "munin-memory_munin_versions": true,
+    "munin-memory_munin_rollback": true,
+    "munin-memory_munin_diff_memory": true,
+    "munin-memory_munin_delete_memory": true
   },
   "permission": {
     "munin-memory_*": "deny",
@@ -101,14 +105,18 @@ If your OpenCode build does not preserve the tool allowlist automatically, add t
     "munin-memory_munin_list_memories": "allow",
     "munin-memory_munin_acknowledge_setup": "allow",
     "munin-memory_munin_share_memory": "allow",
-    "munin-memory_munin_get_project_info": "allow"
+    "munin-memory_munin_get_project_info": "allow",
+    "munin-memory_munin_versions": "allow",
+    "munin-memory_munin_rollback": "allow",
+    "munin-memory_munin_diff_memory": "allow",
+    "munin-memory_munin_delete_memory": "allow"
   }
 }
 ```
 
 ### Why the tool allowlist is required
 
-As of **April 21, 2026**, OpenCode can connect to the Munin MCP server normally, but some rare Munin tools published by the server use schemas that OpenCode's current Responses-based providers reject before the session starts. Disabling all `munin-memory_*` tools first, then explicitly re-enabling the core Munin workflow tools above, avoids the provider-side schema failure while preserving the normal Memory Index Protocol flow.
+As of **April 21, 2026**, OpenCode can connect to the Munin MCP server normally, but some rare Munin tools published by the server use schemas that OpenCode's current Responses-based providers reject before the session starts. Disabling all `munin-memory_*` tools first, then explicitly re-enabling the full Munin tool set above, avoids the provider-side schema failure while preserving the normal Memory Index Protocol flow.
 
 This was verified on:
 
@@ -224,7 +232,7 @@ Keep the instruction as a pointer only. Do not paste the full methodology inline
 |---|---|---|
 | `No MCP servers configured` | Munin MCP was not added at user scope | Run `opencode mcp add munin-memory npx -y @kalera/munin-mcp-server@latest` |
 | `munin-memory` disconnected | `npx` or Node.js unavailable | Install Node.js and confirm `npx -y @kalera/munin-mcp-server@latest --version` succeeds |
-| OpenCode fails before any prompt runs with an invalid schema error for a Munin tool | Rare Munin tool schema rejected by the current provider | Keep the Step 3 user-level `tools` allowlist in place |
+| OpenCode fails before any prompt runs with an invalid schema error for a Munin tool | Rare Munin tool schema rejected by the current provider | Keep the Step 3 user-level `tools` allowlist in place and re-enable the full Munin tool set explicitly |
 | `MUNIN_API_KEY is required` | `.env.local` missing or not in the project root | Recreate `.env.local` in the repo root |
 | `projectId is required` | `MUNIN_PROJECT` missing | Add it to `.env.local` |
 | `401 Unauthorized` | Wrong API key | Re-copy from [munin.kalera.app/dashboard](https://munin.kalera.app/dashboard) |

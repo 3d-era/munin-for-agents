@@ -199,6 +199,7 @@ Or manually create `~/.hermes/skills/munin-memory-protocol/SKILL.md` with the co
 | `EAI_AGAIN` / network timeout | DNS/proxy issue | Confirm `MUNIN_BASE_URL` is unset or `https://munin.kalera.dev` |
 | `${MUNIN_API_KEY}` not resolved | Hermes `.env` file doesn't exist or isn't loaded | Confirm `~/.hermes/.env` exists with the correct variables; some Hermes setups may require a restart after editing `.env` |
 | Returns memories from wrong project | `MUNIN_PROJECT` points to wrong project | Check `~/.hermes/.env` and update the project ID |
+| `Invalid schema for function ... must have type 'object' and not have 'oneOf'/'anyOf'/'allOf' at the top level` | Older Munin MCP runtime exposing provider-incompatible tool schemas | Upgrade to a runtime build that flattens version-control tool schemas and enforces `key`/`id` exclusivity at runtime |
 
 ---
 

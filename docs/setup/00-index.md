@@ -228,13 +228,16 @@ These 8 schemas cover ~95% of agent usage. Match the JSON exactly when calling.
 }
 ```
 
-### Version-control tools (rare flows)
+### Version-control and destructive tools (rare flows)
 
 ```json
-{ "name": "munin_versions",     "inputSchema": { "type": "object", "properties": { "projectId": {"type":"string"}, "key": {"type":"string"}, "id": {"type":"string"} }, "required": ["key"] } }
-{ "name": "munin_rollback",     "inputSchema": { "type": "object", "properties": { "projectId": {"type":"string"}, "key": {"type":"string"}, "id": {"type":"string"}, "version": {"type":"number"} }, "required": ["key", "version"] } }
+{ "name": "munin_versions",     "inputSchema": { "type": "object", "properties": { "projectId": {"type":"string"}, "key": {"type":"string"}, "id": {"type":"string"} }, "required": [] } }
+{ "name": "munin_rollback",     "inputSchema": { "type": "object", "properties": { "projectId": {"type":"string"}, "key": {"type":"string"}, "id": {"type":"string"}, "version": {"type":"number"} }, "required": ["version"] } }
 { "name": "munin_diff_memory",  "inputSchema": { "type": "object", "properties": { "projectId": {"type":"string"}, "key": {"type":"string"}, "v1": {"type":"number"}, "v2": {"type":"number"} }, "required": ["key", "v1", "v2"] } }
+{ "name": "munin_delete_memory","inputSchema": { "type": "object", "properties": { "projectId": {"type":"string"}, "key": {"type":"string"}, "id": {"type":"string"} }, "required": [] } }
 ```
+
+For `munin_versions`, `munin_rollback`, and `munin_delete_memory`, pass exactly one of `key` or `id`. The mutual-exclusion rule is enforced at runtime instead of through top-level schema combinators so stricter MCP clients and providers can accept the tool definitions.
 
 ---
 

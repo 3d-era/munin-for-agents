@@ -128,6 +128,23 @@ EOF
 
 In **interactive mode** (running `codex` without `exec`), Codex presents an approval prompt per call — this is fine for interactive use and does not need the above change. Only apply the setting if you primarily use `codex exec`.
 
+If you want a project review checklist for allowed Munin tools, validate the `munin-memory` server exposes this full set in the session tool list:
+
+- `munin_search_memories`
+- `munin_store_memory`
+- `munin_retrieve_memory`
+- `munin_recent_memories`
+- `munin_list_memories`
+- `munin_acknowledge_setup`
+- `munin_share_memory`
+- `munin_get_project_info`
+- `munin_versions`
+- `munin_rollback`
+- `munin_diff_memory`
+- `munin_delete_memory`
+
+Do not disable the version-control or delete tools in Codex-specific policy if you want full Munin coverage in this project. `munin_delete_memory` is destructive, so keep normal human approval for actual delete operations.
+
 ---
 
 ## Step 5 — Verify

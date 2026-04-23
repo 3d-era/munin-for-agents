@@ -7,6 +7,12 @@ import {
 import { MuninClient } from "@kalera/munin-sdk";
 import { loadCliEnv, resolveProjectId, resolveEncryptionKey, safeError } from "./index.js";
 
+function hasSingleIdentifier(args: Record<string, unknown>): args is Record<string, unknown> & { key?: string; id?: string } {
+  const hasKey = typeof args.key === "string" && args.key.length > 0;
+  const hasId = typeof args.id === "string" && args.id.length > 0;
+  return hasKey !== hasId;
+}
+
 export function createMcpServerInstance(
   env: ReturnType<typeof loadCliEnv>,
   opts?: { allowMissingApiKey?: boolean },
@@ -191,10 +197,7 @@ export function createMcpServerInstance(
               key: { type: "string", description: "Memory key (provide this OR id, not both)" },
               id: { type: "string", description: "Memory ID (provide this OR key, not both)" },
             },
-            oneOf: [
-              { required: ["key"] },
-              { required: ["id"] },
-            ],
+            required: [],
           },
         },
         {
@@ -209,10 +212,6 @@ export function createMcpServerInstance(
               version: { type: "number", description: "The version number to rollback to (required)" },
             },
             required: ["version"],
-            oneOf: [
-              { required: ["key"] },
-              { required: ["id"] },
-            ],
           },
         },
         {
@@ -239,10 +238,7 @@ export function createMcpServerInstance(
               key: { type: "string", description: "Memory key (provide this OR id, not both)" },
               id: { type: "string", description: "Memory ID (provide this OR key, not both)" }
             },
-            oneOf: [
-              { required: ["key"] },
-              { required: ["id"] }
-            ]
+            required: [],
           }
         },
         {
@@ -314,14 +310,14 @@ export function createMcpServerInstance(
           break;
         }
         case "munin_versions":
-          if (!args.key && !args.id) {
-            throw new Error("munin_versions requires either 'key' or 'id' to identify the target memory.");
+          if (!hasSingleIdentifier(args)) {
+            throw new Error("munin_versions requires exactly one of 'key' or 'id' to identify the target memory.");
           }
           result = await client.invoke(projectId, "versions", { key: args.key, id: args.id });
           break;
         case "munin_rollback":
-          if (!args.key && !args.id) {
-            throw new Error("munin_rollback requires either 'key' or 'id' to identify the target memory.");
+          if (!hasSingleIdentifier(args)) {
+            throw new Error("munin_rollback requires exactly one of 'key' or 'id' to identify the target memory.");
           }
           if (typeof args.version !== "number") {
             throw new Error("munin_rollback requires a numeric 'version' to roll back to.");
@@ -329,8 +325,8 @@ export function createMcpServerInstance(
           result = await client.invoke(projectId, "rollback", { key: args.key, id: args.id, version: args.version });
           break;
         case "munin_delete_memory":
-          if (!args.key && !args.id) {
-            throw new Error("munin_delete_memory requires either 'key' or 'id' to identify the target memory.");
+          if (!hasSingleIdentifier(args)) {
+            throw new Error("munin_delete_memory requires exactly one of 'key' or 'id' to identify the target memory.");
           }
           result = await client.invoke(projectId, "delete", { key: args.key, id: args.id });
           break;
