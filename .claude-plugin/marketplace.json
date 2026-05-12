@@ -22,7 +22,7 @@
         "name": "Kalera",
         "email": "munin@kalera.app"
       },
-      "homepage": "https://munin.kalera.app",
+      "homepage": "https://munin.kalera.ai",
       "repository": "https://github.com/3d-era/munin-for-agents",
       "license": "MIT",
       "keywords": ["memory", "ai", "graphrag", "knowledge-graph", "context", "developer-tools"],

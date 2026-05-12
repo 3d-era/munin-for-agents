@@ -3,7 +3,7 @@
   "name": "io.github.3d-era/munin-mcp-server",
   "title": "Munin AI Memory",
   "description": "Pragmatic long-term memory for AI agents with Multi-Project support and GraphRAG. FREE FOREVER.",
-  "websiteUrl": "https://munin.kalera.app",
+  "websiteUrl": "https://munin.kalera.ai",
   "repository": {
     "url": "https://github.com/3d-era/munin-for-agents",
     "source": "github"
@@ -21,7 +21,7 @@
       "environmentVariables": [
         {
           "name": "MUNIN_API_KEY",
-          "description": "Get your free cloud key at https://munin.kalera.app",
+          "description": "Get your free cloud key at https://munin.kalera.ai",
           "isRequired": true,
           "isSecret": true
         },

@@ -33,7 +33,7 @@ configSchema:
   properties:
     apiKey:
       type: string
-      description: "Your Munin API Key. Get your free cloud key at https://munin.kalera.app"
+      description: "Your Munin API Key. Get your free cloud key at https://munin.kalera.ai"
     projectId:
       type: string
       description: "Your target Context Core (Project) ID."
